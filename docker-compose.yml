@@ -1,0 +1,22 @@
+services:
+  salorie-landing:
+    image: ghcr.io/salistar/salorie-landing:latest
+    container_name: salorie-landing
+    pull_policy: always
+    restart: always
+    ports:
+      - '127.0.0.1:4002:3000'
+    environment:
+      NODE_ENV: production
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    networks:
+      - salistar-network
+
+networks:
+  salistar-network:
+    name: salistar-network
+    external: true
