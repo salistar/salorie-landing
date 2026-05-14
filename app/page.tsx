@@ -1,12 +1,38 @@
 import {
   Camera, Activity, Brain, TrendingUp, Globe, Shield,
-  Smartphone, ChevronRight, Github, ExternalLink, Star,
+  Smartphone, ChevronRight, Github, ExternalLink, Star, Download,
 } from 'lucide-react';
 
 const PRIMARY = '#298f50';
 const PRIMARY_DARK = '#1f6b3c';
 
-export default function Home() {
+// URL stable du dernier APK debug Salorie publie par GitHub Actions
+// (tag "latest" overwrite a chaque push main, voir .github/workflows/android-build.yml du repo mobile).
+// GitHub Releases sert avec Content-Disposition: attachment, donc <a download> declenche
+// un vrai telechargement sans navigation.
+const APK_URL = 'https://github.com/salistar/salorie/releases/download/latest/app-debug.apk';
+
+// Helper pour fetcher la taille + date du dernier release (Server Component, cache 5min)
+async function getApkMeta(): Promise<{ sizeMB: string; date: string } | null> {
+  try {
+    const res = await fetch('https://api.github.com/repos/salistar/salorie/releases/tags/latest', {
+      next: { revalidate: 300 }, // re-fetch toutes les 5 min
+      headers: { Accept: 'application/vnd.github+json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const apk = data.assets?.find((a: any) => a.name === 'app-debug.apk');
+    if (!apk) return null;
+    const sizeMB = (apk.size / 1024 / 1024).toFixed(0);
+    const date = new Date(apk.updated_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+    return { sizeMB, date };
+  } catch {
+    return null;
+  }
+}
+
+export default async function Home() {
+  const apk = await getApkMeta();
   return (
     <main style={{ overflow: 'hidden' }}>
       {/* NAV */}
@@ -80,14 +106,19 @@ export default function Home() {
               en un scan.
             </p>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
-              <a href="#download" style={{
-                display: 'inline-flex', alignItems: 'center', gap: 10,
-                padding: '16px 32px', borderRadius: 14,
-                background: PRIMARY, color: '#fff',
-                fontWeight: 700, fontSize: 16,
-                boxShadow: '0 10px 30px rgba(41,143,80,0.3)',
-              }}>
-                Télécharger l'app <ChevronRight size={18} />
+              <a
+                href={APK_URL}
+                download="salorie-latest.apk"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 10,
+                  padding: '16px 32px', borderRadius: 14,
+                  background: PRIMARY, color: '#fff',
+                  fontWeight: 700, fontSize: 16,
+                  boxShadow: '0 10px 30px rgba(41,143,80,0.3)',
+                }}
+              >
+                <Download size={18} /> Télécharger l'APK
+                {apk && <span style={{ opacity: 0.8, fontSize: 13, marginLeft: 4 }}>({apk.sizeMB} MB)</span>}
               </a>
               <a href="https://github.com/salistar/salorie" target="_blank" rel="noopener" style={{
                 display: 'inline-flex', alignItems: 'center', gap: 10,
@@ -237,16 +268,24 @@ export default function Home() {
           <p style={{ fontSize: 18, marginTop: 16, opacity: 0.95 }}>
             APK direct (debug) — bientôt sur Google Play.
           </p>
+          {apk && (
+            <p style={{ fontSize: 13, marginTop: 8, opacity: 0.75 }}>
+              Dernière build : {apk.date} · {apk.sizeMB} MB
+            </p>
+          )}
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 32, flexWrap: 'wrap' }}>
-            <a href="https://github.com/salistar/salorie/releases/latest"
-               target="_blank" rel="noopener"
-               style={{
-                 padding: '16px 32px', borderRadius: 14,
-                 background: '#fff', color: PRIMARY_DARK,
-                 fontWeight: 800, fontSize: 16,
-                 display: 'inline-flex', alignItems: 'center', gap: 10,
-               }}>
-              <Smartphone size={20} /> Télécharger APK
+            <a
+              href={APK_URL}
+              download="salorie-latest.apk"
+              style={{
+                padding: '16px 32px', borderRadius: 14,
+                background: '#fff', color: PRIMARY_DARK,
+                fontWeight: 800, fontSize: 16,
+                display: 'inline-flex', alignItems: 'center', gap: 10,
+              }}
+            >
+              <Download size={20} /> Télécharger APK
+              {apk && <span style={{ opacity: 0.7, fontSize: 13, marginLeft: 4 }}>({apk.sizeMB} MB)</span>}
             </a>
             <a href="https://github.com/salistar/salorie"
                target="_blank" rel="noopener"
