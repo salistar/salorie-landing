@@ -6,22 +6,22 @@ import {
 const PRIMARY = '#298f50';
 const PRIMARY_DARK = '#1f6b3c';
 
-// URL stable du dernier APK debug Salorie publie par GitHub Actions
-// (tag "latest" overwrite a chaque push main, voir .github/workflows/android-build.yml du repo mobile).
+// APK SIGNE de production (release v1.0.0, keystore Salistar).
+// Sert au sideload / partage direct. Le Play Store, lui, recoit le .aab.
 // GitHub Releases sert avec Content-Disposition: attachment, donc <a download> declenche
 // un vrai telechargement sans navigation.
-const APK_URL = 'https://github.com/salistar/salorie/releases/download/latest/app-debug.apk';
+const APK_URL = 'https://github.com/salistar/salorie/releases/download/v1.0.0/salorie-v1.0.0-prod.apk';
 
-// Helper pour fetcher la taille + date du dernier release (Server Component, cache 5min)
+// Helper pour fetcher la taille + date du release signe (Server Component, cache 5min)
 async function getApkMeta(): Promise<{ sizeMB: string; date: string } | null> {
   try {
-    const res = await fetch('https://api.github.com/repos/salistar/salorie/releases/tags/latest', {
+    const res = await fetch('https://api.github.com/repos/salistar/salorie/releases/tags/v1.0.0', {
       next: { revalidate: 300 }, // re-fetch toutes les 5 min
       headers: { Accept: 'application/vnd.github+json' },
     });
     if (!res.ok) return null;
     const data = await res.json();
-    const apk = data.assets?.find((a: any) => a.name === 'app-debug.apk');
+    const apk = data.assets?.find((a: any) => a.name === 'salorie-v1.0.0-prod.apk');
     if (!apk) return null;
     const sizeMB = (apk.size / 1024 / 1024).toFixed(0);
     const date = new Date(apk.updated_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -46,12 +46,9 @@ export default async function Home() {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{
-              width: 36, height: 36, borderRadius: 10,
-              background: `linear-gradient(135deg, ${PRIMARY} 0%, ${PRIMARY_DARK} 100%)`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', fontSize: 18, fontWeight: 900,
-            }}>S</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.png" alt="Salorie logo" width={36} height={36}
+                 style={{ borderRadius: 10, boxShadow: '0 4px 12px rgba(41,143,80,0.25)' }} />
             <span style={{ fontSize: 22, fontWeight: 900, letterSpacing: -0.5 }}>
               Salorie
             </span>
@@ -108,7 +105,7 @@ export default async function Home() {
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
               <a
                 href={APK_URL}
-                download="salorie-latest.apk"
+                download="salorie-v1.0.0.apk"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 10,
                   padding: '16px 32px', borderRadius: 14,
@@ -252,6 +249,44 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* SCREENSHOTS */}
+      <section id="screenshots" style={{ padding: '80px 0 40px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
+          <h2 style={{ fontSize: 42, fontWeight: 900, letterSpacing: -1, margin: 0, textAlign: 'center' }}>
+            L&apos;app en images
+          </h2>
+          <p style={{ textAlign: 'center', color: '#64748b', fontSize: 18, marginTop: 12, marginBottom: 8 }}>
+            Captures réelles de Salorie sur Android.
+          </p>
+        </div>
+        <div style={{
+          display: 'flex', gap: 20, overflowX: 'auto', padding: '32px 24px',
+          scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch',
+        }}>
+          {[
+            { src: '/screenshots/05-home-top.png', alt: 'Tableau de bord quotidien' },
+            { src: '/screenshots/11-scan-food.png', alt: 'Scan IA des repas' },
+            { src: '/screenshots/06-analytics.png', alt: 'Analytics et insights' },
+            { src: '/screenshots/10-dashboard.png', alt: 'Activité du jour' },
+            { src: '/screenshots/09-water.png', alt: 'Suivi hydratation' },
+            { src: '/screenshots/07-profile.png', alt: 'Profil utilisateur' },
+          ].map((s) => (
+            <img
+              key={s.src}
+              src={s.src}
+              alt={s.alt}
+              style={{
+                height: 560, width: 'auto', flex: '0 0 auto',
+                borderRadius: 28, scrollSnapAlign: 'center',
+                border: '1px solid rgba(0,0,0,0.06)',
+                boxShadow: '0 20px 50px rgba(31,107,60,0.18)',
+                background: '#fff',
+              }}
+            />
+          ))}
+        </div>
+      </section>
+
       {/* DOWNLOAD CTA */}
       <section id="download" style={{ padding: '80px 24px' }}>
         <div style={{
@@ -276,7 +311,7 @@ export default async function Home() {
           <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 32, flexWrap: 'wrap' }}>
             <a
               href={APK_URL}
-              download="salorie-latest.apk"
+              download="salorie-v1.0.0.apk"
               style={{
                 padding: '16px 32px', borderRadius: 14,
                 background: '#fff', color: PRIMARY_DARK,
@@ -299,6 +334,14 @@ export default async function Home() {
               <ExternalLink size={20} /> Code source
             </a>
           </div>
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 28,
+            padding: '10px 18px', borderRadius: 999,
+            background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)',
+            fontSize: 14, fontWeight: 700,
+          }}>
+            <Smartphone size={16} /> Bientôt sur Google Play
+          </div>
         </div>
       </section>
 
@@ -307,6 +350,11 @@ export default async function Home() {
         padding: '40px 24px', textAlign: 'center',
         borderTop: '1px solid #e2e8f0', color: '#64748b', fontSize: 14,
       }}>
+        <div style={{ display: 'flex', gap: 20, justifyContent: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+          <a href="/privacy" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>Privacy Policy</a>
+          <a href="/terms" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>Terms &amp; Conditions</a>
+          <a href="https://github.com/salistar/salorie" target="_blank" rel="noopener" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>GitHub</a>
+        </div>
         <p>© 2026 Salorie — <a href="https://salistar.com" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>salistar.com</a></p>
       </footer>
     </main>
