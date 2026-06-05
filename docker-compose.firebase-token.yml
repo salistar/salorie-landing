@@ -1,0 +1,31 @@
+# Clerk -> Firebase token endpoint — deployed alongside the Salorie landing,
+# same VPS / same pattern (GHCR image + Cloudflare Tunnel).
+# The image is built & pushed by the salistar/salorie repo CI
+# (.github/workflows/firebase-token.yml -> ghcr.io/salistar/salorie-firebase-token).
+#
+# Bring up:  docker compose -f docker-compose.firebase-token.yml up -d
+# Secrets come from firebase-token.env (written by the deploy workflow from the
+# FIREBASE_TOKEN_ENV GitHub secret; never committed).
+services:
+  firebase-token:
+    image: ghcr.io/salistar/salorie-firebase-token:latest
+    container_name: salorie-firebase-token
+    pull_policy: always
+    restart: always
+    # Localhost only — Cloudflare Tunnel terminates TLS and routes the hostname.
+    ports:
+      - '127.0.0.1:4004:8787'
+    env_file:
+      - firebase-token.env
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    networks:
+      - salistar-network
+
+networks:
+  salistar-network:
+    name: salistar-network
+    external: true
