@@ -1,0 +1,383 @@
+"use client";
+
+import { useEffect, useState, type CSSProperties } from "react";
+import {
+  Camera, Activity, Brain, TrendingUp, Globe, Shield,
+  Smartphone, Github, ExternalLink, Download, Package,
+  Trophy, Dumbbell, Heart, Sparkles, Sun, Moon, Quote,
+} from "lucide-react";
+
+const PRIMARY = "#298f50";
+const PRIMARY_DARK = "#1f6b3c";
+const REL = "https://github.com/salistar/salorie/releases/download/v1.0.0";
+const APK_URL = `${REL}/salorie-v1.0.0-prod.apk`;
+const AAB_URL = `${REL}/salorie-v1.0.0-prod.aab`;
+const REPO = "https://github.com/salistar/salorie";
+
+const SHOT_SRCS = [
+  "/screenshots/01-home.png", "/screenshots/19-scan-barcode.png", "/screenshots/20-nutrients.png",
+  "/screenshots/03-analytics.png", "/screenshots/03-coach.png", "/screenshots/04-meal-plan.png",
+  "/screenshots/05-social.png", "/screenshots/21-coach-achievements.png", "/screenshots/06-health.png",
+  "/screenshots/17-workout-lifting.png", "/screenshots/18-workout-run.png", "/screenshots/07-add-water.png",
+  "/screenshots/02-home-activity.png", "/screenshots/12-personal-details.png", "/screenshots/10-notifications.png",
+  "/screenshots/11-preferences.png",
+];
+// Indices used by the auto-playing demo.
+const DEMO_IDX = [0, 1, 2, 3, 5, 6];
+
+const FEAT_ICONS = [
+  <Camera size={26} key="c" />, <Activity size={26} key="a" />, <Brain size={26} key="b" />,
+  <TrendingUp size={26} key="t" />, <Trophy size={26} key="tr" />, <Heart size={26} key="h" />,
+  <Dumbbell size={26} key="d" />, <Globe size={26} key="g" />, <Shield size={26} key="s" />,
+];
+
+type Lang = "fr" | "en" | "ar";
+
+const T: Record<Lang, any> = {
+  fr: {
+    dir: "ltr",
+    nav: { features: "Fonctions", shots: "Captures", testi: "Avis", download: "Télécharger" },
+    badge: "Propulsé par l'IA Gemini",
+    h1a: "Scanne ton repas,", h1b: "suis tes calories", h1c: ", atteins tes objectifs.",
+    heroSub: "Salorie analyse tes repas en temps réel par photo. Macros, calories, micronutriments, coach adaptatif et plans de repas — tout en un scan.",
+    ctaApk: "Télécharger l'APK", ctaSee: "Voir l'app",
+    stats: [{ v: "100%", l: "Privé & sécurisé" }, { v: "<2s", l: "Analyse IA" }, { v: "3", l: "Langues · FR/EN/AR" }],
+    featTitle: "Tout pour atteindre tes objectifs", featSub: "Une app complète, pensée pour de vrais utilisateurs.",
+    features: [
+      { t: "Scan IA instantané", d: "Photographie ton assiette : Gemini identifie les aliments et calcule les macros en moins de 2 secondes." },
+      { t: "Suivi nutritionnel complet", d: "Calories, protéines, glucides, lipides, eau, exercice — centralisés dans un dashboard clair." },
+      { t: "Micronutriments + insights", d: "Vitamines, fer, magnésium… estimés par IA, avec recommandations personnalisées en 3 langues." },
+      { t: "Coach TDEE adaptatif", d: "Tes besoins recalculés en continu selon ta dépense réelle et ta tendance de poids." },
+      { t: "Social & gamification", d: "Classement entre amis, streaks et succès à débloquer pour rester motivé sur la durée." },
+      { t: "Health Connect", d: "Synchronise pas, activité et données santé avec l'écosystème Android Health Connect." },
+      { t: "Workouts & plans repas", d: "Séances musculation/course avec calories dépensées, et plans de repas générés par IA." },
+      { t: "3 langues · RTL", d: "Français, English, العربية — interface arabe right-to-left parfaitement intégrée." },
+      { t: "Auth & données sécurisées", d: "Connexion Clerk (Google/email) et Firestore verrouillé par utilisateur." },
+    ],
+    howTitle: "Comment ça marche",
+    steps: [
+      { t: "Onboarding rapide", d: "Renseigne ton profil (5 questions). On calcule tes besoins en moins d'une minute." },
+      { t: "Scan tes repas", d: "Pointe la caméra sur ton assiette. Gemini te dit ce que tu manges, avec macros précis." },
+      { t: "Suis tes progrès", d: "Dashboard quotidien, graphiques hebdo, insights IA pour ajuster ton plan." },
+    ],
+    demoTitle: "Démo en direct", demoSub: "Un aperçu animé des écrans clés.",
+    shotsTitle: "L'app en images", shotsSub: "Captures réelles de Salorie sur Android — 16 écrans.", scrollHint: "← Fais défiler pour voir tous les écrans →",
+    shots: ["Tableau de bord", "Scan IA", "Micronutriments", "Analytics & insights", "Coach adaptatif", "Plans de repas", "Classement social", "Gamification", "Health Connect", "Musculation", "Course", "Hydratation", "Activité du jour", "Objectifs perso", "Notifications", "Préférences · 3 langues"],
+    testTitle: "Ils utilisent Salorie", testSub: "Retours de nos bêta-testeurs.",
+    testimonials: [
+      { q: "Le scan IA est bluffant : je photographie mon plat et tout est calculé. Je n'ai jamais autant tenu un suivi.", n: "Yasmine B.", r: "Étudiante, Casablanca" },
+      { q: "Le coach adaptatif ajuste mes calories tout seul selon mon poids. Bien plus malin que les autres apps.", n: "Karim L.", r: "Coureur amateur" },
+      { q: "Enfin une app en arabe, et le suivi des micronutriments m'aide vraiment au quotidien.", n: "Salma E.", r: "Diététicienne" },
+    ],
+    dlTitle: "Disponible sur Android", dlSub: "APK signé de production — installation directe. Bientôt sur Google Play.",
+    build: "Build", dlApk: "Télécharger l'APK", dlAab: "Bundle .aab (Play Store)", source: "Code source & releases sur GitHub",
+    footer: { privacy: "Confidentialité", terms: "Conditions", github: "GitHub" },
+  },
+  en: {
+    dir: "ltr",
+    nav: { features: "Features", shots: "Screens", testi: "Reviews", download: "Download" },
+    badge: "Powered by Gemini AI",
+    h1a: "Scan your meal,", h1b: "track your calories", h1c: ", hit your goals.",
+    heroSub: "Salorie analyzes your meals in real time from a photo. Macros, calories, micronutrients, an adaptive coach and meal plans — all in one scan.",
+    ctaApk: "Download the APK", ctaSee: "See the app",
+    stats: [{ v: "100%", l: "Private & secure" }, { v: "<2s", l: "AI analysis" }, { v: "3", l: "Languages · EN/FR/AR" }],
+    featTitle: "Everything you need to reach your goals", featSub: "A complete app, built for real users.",
+    features: [
+      { t: "Instant AI scan", d: "Snap your plate: Gemini identifies the foods and computes macros in under 2 seconds." },
+      { t: "Full nutrition tracking", d: "Calories, protein, carbs, fat, water, exercise — centralized in a clean dashboard." },
+      { t: "Micronutrients + insights", d: "Vitamins, iron, magnesium… AI-estimated, with personalized tips in 3 languages." },
+      { t: "Adaptive TDEE coach", d: "Your needs recalculated continuously from your real burn and weight trend." },
+      { t: "Social & gamification", d: "Leaderboard with friends, streaks and achievements to stay motivated over time." },
+      { t: "Health Connect", d: "Sync steps, activity and health data with the Android Health Connect ecosystem." },
+      { t: "Workouts & meal plans", d: "Lifting/running sessions with calories burned, plus AI-generated meal plans." },
+      { t: "3 languages · RTL", d: "Français, English, العربية — Arabic right-to-left UI fully integrated." },
+      { t: "Secure auth & data", d: "Clerk sign-in (Google/email) and per-user locked Firestore." },
+    ],
+    howTitle: "How it works",
+    steps: [
+      { t: "Quick onboarding", d: "Fill in your profile (5 questions). We compute your needs in under a minute." },
+      { t: "Scan your meals", d: "Point the camera at your plate. Gemini tells you what you're eating, with precise macros." },
+      { t: "Track progress", d: "Daily dashboard, weekly charts, AI insights to fine-tune your plan." },
+    ],
+    demoTitle: "Live demo", demoSub: "An animated preview of the key screens.",
+    shotsTitle: "The app in pictures", shotsSub: "Real captures of Salorie on Android — 16 screens.", scrollHint: "← Scroll to see all screens →",
+    shots: ["Dashboard", "AI scan", "Micronutrients", "Analytics & insights", "Adaptive coach", "Meal plans", "Social leaderboard", "Gamification", "Health Connect", "Lifting", "Running", "Hydration", "Daily activity", "Personal goals", "Notifications", "Preferences · 3 languages"],
+    testTitle: "They use Salorie", testSub: "Feedback from our beta testers.",
+    testimonials: [
+      { q: "The AI scan is mind-blowing: I photograph my dish and everything is calculated. I've never tracked so consistently.", n: "Yasmine B.", r: "Student, Casablanca" },
+      { q: "The adaptive coach adjusts my calories on its own based on my weight. Way smarter than other apps.", n: "Karim L.", r: "Amateur runner" },
+      { q: "Finally an app in Arabic, and the micronutrient tracking genuinely helps me day to day.", n: "Salma E.", r: "Dietitian" },
+    ],
+    dlTitle: "Available on Android", dlSub: "Signed production APK — direct install. Coming soon to Google Play.",
+    build: "Build", dlApk: "Download the APK", dlAab: "Bundle .aab (Play Store)", source: "Source code & releases on GitHub",
+    footer: { privacy: "Privacy", terms: "Terms", github: "GitHub" },
+  },
+  ar: {
+    dir: "rtl",
+    nav: { features: "الميزات", shots: "اللقطات", testi: "الآراء", download: "تحميل" },
+    badge: "مدعوم بالذكاء الاصطناعي Gemini",
+    h1a: "صوّر وجبتك،", h1b: "تتبّع سعراتك", h1c: "، وحقّق أهدافك.",
+    heroSub: "يحلّل Salorie وجباتك فوريًا من صورة. الماكروز والسعرات والعناصر الدقيقة ومدرّب متكيّف وخطط وجبات — كل ذلك بمسحة واحدة.",
+    ctaApk: "تحميل APK", ctaSee: "شاهد التطبيق",
+    stats: [{ v: "100%", l: "خاص وآمن" }, { v: "<2 ث", l: "تحليل بالذكاء" }, { v: "3", l: "لغات · ع/إن/فر" }],
+    featTitle: "كل ما تحتاجه لتحقيق أهدافك", featSub: "تطبيق متكامل مصمّم لمستخدمين حقيقيين.",
+    features: [
+      { t: "مسح فوري بالذكاء", d: "صوّر طبقك: يتعرّف Gemini على الأطعمة ويحسب الماكروز في أقل من ثانيتين." },
+      { t: "تتبّع غذائي كامل", d: "السعرات والبروتين والكربوهيدرات والدهون والماء والتمارين — في لوحة واحدة واضحة." },
+      { t: "عناصر دقيقة + رؤى", d: "الفيتامينات والحديد والمغنيسيوم… تُقدَّر بالذكاء مع نصائح مخصّصة بثلاث لغات." },
+      { t: "مدرّب TDEE متكيّف", d: "تُعاد حسابات احتياجك باستمرار وفق حرقك الفعلي واتجاه وزنك." },
+      { t: "اجتماعي وتحفيز", d: "ترتيب بين الأصدقاء وسلاسل وإنجازات للبقاء متحفزًا على المدى الطويل." },
+      { t: "Health Connect", d: "مزامنة الخطوات والنشاط وبيانات الصحة مع منظومة أندرويد Health Connect." },
+      { t: "تمارين وخطط وجبات", d: "جلسات حديد/جري مع السعرات المحروقة وخطط وجبات يولّدها الذكاء." },
+      { t: "3 لغات · RTL", d: "العربية والإنجليزية والفرنسية — واجهة عربية من اليمين لليسار مدمجة بإتقان." },
+      { t: "مصادقة وبيانات آمنة", d: "تسجيل عبر Clerk (Google/البريد) وFirestore مقفل لكل مستخدم." },
+    ],
+    howTitle: "كيف يعمل",
+    steps: [
+      { t: "إعداد سريع", d: "أدخل ملفك (5 أسئلة). نحسب احتياجك في أقل من دقيقة." },
+      { t: "صوّر وجباتك", d: "وجّه الكاميرا نحو طبقك. يخبرك Gemini بما تأكله مع ماكروز دقيقة." },
+      { t: "تابع تقدّمك", d: "لوحة يومية ورسوم أسبوعية ورؤى بالذكاء لضبط خطتك." },
+    ],
+    demoTitle: "عرض مباشر", demoSub: "معاينة متحركة للشاشات الرئيسية.",
+    shotsTitle: "التطبيق بالصور", shotsSub: "لقطات حقيقية من Salorie على أندرويد — 16 شاشة.", scrollHint: "← مرّر لرؤية كل الشاشات →",
+    shots: ["لوحة التحكم", "مسح بالذكاء", "العناصر الدقيقة", "التحليلات والرؤى", "المدرّب المتكيّف", "خطط الوجبات", "الترتيب الاجتماعي", "التحفيز", "Health Connect", "حديد", "جري", "الترطيب", "نشاط اليوم", "الأهداف الشخصية", "الإشعارات", "التفضيلات · 3 لغات"],
+    testTitle: "يستخدمون Salorie", testSub: "آراء من المختبرين الأوائل.",
+    testimonials: [
+      { q: "المسح بالذكاء مذهل: أصوّر طبقي فيُحسب كل شيء. لم ألتزم بالتتبّع هكذا من قبل.", n: "ياسمين ب.", r: "طالبة، الدار البيضاء" },
+      { q: "المدرّب المتكيّف يضبط سعراتي تلقائيًا حسب وزني. أذكى بكثير من التطبيقات الأخرى.", n: "كريم ل.", r: "عدّاء هاوٍ" },
+      { q: "أخيرًا تطبيق بالعربية، وتتبّع العناصر الدقيقة يساعدني فعلاً يوميًا.", n: "سلمى إ.", r: "أخصائية تغذية" },
+    ],
+    dlTitle: "متوفّر على أندرويد", dlSub: "APK موقّع للإنتاج — تثبيت مباشر. قريبًا على Google Play.",
+    build: "إصدار", dlApk: "تحميل APK", dlAab: "حزمة ‎.aab (Play Store)", source: "الشيفرة والإصدارات على GitHub",
+    footer: { privacy: "الخصوصية", terms: "الشروط", github: "GitHub" },
+  },
+};
+
+export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB: string | null; iso: string | null } | null }) {
+  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [lang, setLang] = useState<Lang>("fr");
+  const [demo, setDemo] = useState(0);
+
+  // Restore prefs.
+  useEffect(() => {
+    const st = (localStorage.getItem("salorie-theme") as "light" | "dark") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    const sl = (localStorage.getItem("salorie-lang") as Lang) || "fr";
+    setTheme(st); setLang(sl);
+  }, []);
+  // Apply theme + dir/lang to <html>.
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("salorie-theme", theme);
+  }, [theme]);
+  useEffect(() => {
+    document.documentElement.setAttribute("lang", lang);
+    document.documentElement.setAttribute("dir", T[lang].dir);
+    localStorage.setItem("salorie-lang", lang);
+  }, [lang]);
+  // Auto-play demo.
+  useEffect(() => {
+    const id = setInterval(() => setDemo((d) => (d + 1) % DEMO_IDX.length), 2200);
+    return () => clearInterval(id);
+  }, []);
+
+  const t = T[lang];
+  const dateStr = meta?.iso ? new Date(meta.iso).toLocaleDateString(lang === "ar" ? "ar" : lang === "en" ? "en-GB" : "fr-FR", { year: "numeric", month: "long", day: "numeric" }) : null;
+  const demoShot = DEMO_IDX[demo];
+
+  return (
+    <main style={{ overflow: "hidden" }}>
+      {/* NAV */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "var(--nav-bg)", backdropFilter: "blur(10px)", borderBottom: "1px solid var(--border)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/icon.png" alt="Salorie" width={34} height={34} style={{ borderRadius: 10, boxShadow: "0 4px 12px rgba(41,143,80,0.25)" }} />
+            <span style={{ fontSize: 21, fontWeight: 900, letterSpacing: -0.5 }}>Salorie</span>
+          </div>
+          <div style={{ display: "flex", gap: 14, alignItems: "center" }}>
+            <a className="nav-text" href="#features" style={navLink}>{t.nav.features}</a>
+            <a className="nav-text" href="#screenshots" style={navLink}>{t.nav.shots}</a>
+            <a className="nav-text" href="#testimonials" style={navLink}>{t.nav.testi}</a>
+            {/* Language switcher */}
+            <div style={{ display: "flex", gap: 4, background: "var(--surface-2)", padding: 4, borderRadius: 10 }}>
+              {(["fr", "en", "ar"] as Lang[]).map((l) => (
+                <button key={l} onClick={() => setLang(l)} style={{
+                  border: "none", cursor: "pointer", padding: "5px 9px", borderRadius: 7, fontSize: 12, fontWeight: 800,
+                  background: lang === l ? PRIMARY : "transparent", color: lang === l ? "#fff" : "var(--muted)",
+                }}>{l.toUpperCase()}</button>
+              ))}
+            </div>
+            {/* Theme toggle */}
+            <button aria-label="theme" onClick={() => setTheme((x) => (x === "dark" ? "light" : "dark"))} style={{
+              border: "1px solid var(--border)", background: "var(--surface)", cursor: "pointer",
+              width: 38, height: 38, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text)",
+            }}>{theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}</button>
+            <a href={REPO} target="_blank" rel="noopener" style={{ display: "flex", alignItems: "center", gap: 7, padding: "8px 14px", borderRadius: 10, background: PRIMARY, color: "#fff", fontWeight: 700, fontSize: 14 }}>
+              <Github size={16} /> GitHub
+            </a>
+          </div>
+        </div>
+      </nav>
+
+      {/* HERO */}
+      <section style={{ paddingTop: 128, paddingBottom: 64, background: "radial-gradient(1200px 500px at 80% -10%, rgba(41,143,80,0.10), transparent), linear-gradient(180deg, var(--hero-from) 0%, transparent 60%)" }}>
+        <div className="hero-grid" style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 56, alignItems: "center" }}>
+          <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 14px", borderRadius: 999, background: "rgba(41,143,80,0.12)", color: PRIMARY, fontSize: 13, fontWeight: 800, marginBottom: 22 }}>
+              <Sparkles size={14} /> {t.badge}
+            </div>
+            <h1 className="h1-resp" style={{ fontSize: 54, fontWeight: 900, lineHeight: 1.06, letterSpacing: -1.5, margin: "0 0 22px 0" }}>
+              {t.h1a}<br /><span style={{ color: PRIMARY }}>{t.h1b}</span>{t.h1c}
+            </h1>
+            <p style={{ fontSize: 19, color: "var(--muted-2)", lineHeight: 1.6, margin: "0 0 30px 0", maxWidth: 520 }}>{t.heroSub}</p>
+            <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+              <a href={APK_URL} download style={{ ...btnPrimary, boxShadow: "0 10px 30px rgba(41,143,80,0.3)" }}>
+                <Download size={18} /> {t.ctaApk}{meta?.apkMB && <span style={{ opacity: 0.8, fontSize: 13 }}>({meta.apkMB} MB)</span>}
+              </a>
+              <a href="#screenshots" style={btnGhost}><Smartphone size={18} /> {t.ctaSee}</a>
+            </div>
+            <div style={{ display: "flex", gap: 30, marginTop: 42, flexWrap: "wrap" }}>
+              {t.stats.map((s: any, i: number) => (
+                <div key={i}><div style={{ fontSize: 27, fontWeight: 900, color: PRIMARY }}>{s.v}</div><div style={{ fontSize: 13, color: "var(--muted)" }}>{s.l}</div></div>
+              ))}
+            </div>
+          </div>
+          <div className="hero-phone" style={{ position: "relative", height: 620, display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <div style={{ position: "absolute", width: 360, height: 360, borderRadius: "50%", background: "radial-gradient(circle, rgba(41,143,80,0.2), transparent 70%)", filter: "blur(20px)" }} />
+            <Phone src={SHOT_SRCS[0]} big />
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURES */}
+      <section id="features" style={{ padding: "66px 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Head title={t.featTitle} sub={t.featSub} />
+          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 22 }}>
+            {t.features.map((f: any, i: number) => (
+              <div key={i} style={card}>
+                <div style={{ width: 54, height: 54, borderRadius: 14, background: "rgba(41,143,80,0.12)", color: PRIMARY, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>{FEAT_ICONS[i]}</div>
+                <h3 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{f.t}</h3>
+                <p style={{ fontSize: 15, color: "var(--muted)", marginTop: 10, marginBottom: 0, lineHeight: 1.6 }}>{f.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO (auto-play) */}
+      <section id="demo" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }} className="hero-grid">
+          <div>
+            <Head title={t.demoTitle} sub={t.demoSub} left />
+            <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+              {DEMO_IDX.map((idx, i) => (
+                <button key={i} onClick={() => setDemo(i)} aria-label="demo" style={{
+                  border: "none", cursor: "pointer", height: 8, borderRadius: 999,
+                  width: demo === i ? 28 : 8, background: demo === i ? PRIMARY : "var(--border)", transition: "all .3s",
+                }} />
+              ))}
+            </div>
+            <p style={{ marginTop: 18, fontSize: 17, fontWeight: 800, color: PRIMARY }}>{t.shots[demoShot]}</p>
+          </div>
+          <div className="hero-phone" style={{ display: "flex", justifyContent: "center" }}>
+            <Phone key={demoShot} src={SHOT_SRCS[demoShot]} fade />
+          </div>
+        </div>
+      </section>
+
+      {/* SCREENSHOTS */}
+      <section id="screenshots" style={{ padding: "66px 0 26px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 24px" }}>
+          <Head title={t.shotsTitle} sub={t.shotsSub} />
+        </div>
+        <div className="shots-scroll" style={{ display: "flex", gap: 26, overflowX: "auto", padding: "26px 24px 34px", scrollSnapType: "x mandatory" }}>
+          {SHOT_SRCS.map((src, i) => (
+            <div key={src} style={{ flex: "0 0 auto", scrollSnapAlign: "center", textAlign: "center" }}>
+              <Phone src={src} />
+              <div style={{ marginTop: 13, fontSize: 14, fontWeight: 700, color: "var(--muted-2)" }}>{t.shots[i]}</div>
+            </div>
+          ))}
+        </div>
+        <p style={{ textAlign: "center", color: "var(--muted)", fontSize: 13, marginTop: 4 }}>{t.scrollHint}</p>
+      </section>
+
+      {/* TESTIMONIALS */}
+      <section id="testimonials" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Head title={t.testTitle} sub={t.testSub} />
+          <div className="grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 22 }}>
+            {t.testimonials.map((tm: any, i: number) => (
+              <div key={i} style={{ ...card, display: "flex", flexDirection: "column", gap: 14 }}>
+                <Quote size={26} color={PRIMARY} />
+                <p style={{ fontSize: 15.5, lineHeight: 1.65, margin: 0, color: "var(--text)" }}>{tm.q}</p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: "auto" }}>
+                  <div style={{ width: 42, height: 42, borderRadius: 999, background: "linear-gradient(135deg," + PRIMARY + "," + PRIMARY_DARK + ")", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800 }}>{tm.n.charAt(0)}</div>
+                  <div><div style={{ fontWeight: 800, fontSize: 14 }}>{tm.n}</div><div style={{ fontSize: 13, color: "var(--muted)" }}>{tm.r}</div></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* DOWNLOAD */}
+      <section id="download" style={{ padding: "66px 24px" }}>
+        <div style={{ maxWidth: 920, margin: "0 auto", padding: 54, borderRadius: 32, background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY_DARK})`, color: "#fff", textAlign: "center", boxShadow: "0 30px 60px rgba(41,143,80,0.3)" }}>
+          <Smartphone size={50} style={{ marginBottom: 18 }} />
+          <h2 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1, margin: 0 }}>{t.dlTitle}</h2>
+          <p style={{ fontSize: 18, marginTop: 14, opacity: 0.95 }}>{t.dlSub}</p>
+          {dateStr && <p style={{ fontSize: 13, marginTop: 8, opacity: 0.78 }}>{t.build} v1.0.0 · {dateStr}{meta?.apkMB && ` · APK ${meta.apkMB} MB`}{meta?.aabMB && ` · AAB ${meta.aabMB} MB`}</p>}
+          <div style={{ display: "flex", gap: 14, justifyContent: "center", marginTop: 26, flexWrap: "wrap" }}>
+            <a href={APK_URL} download style={{ padding: "16px 28px", borderRadius: 14, background: "#fff", color: PRIMARY_DARK, fontWeight: 800, fontSize: 16, display: "inline-flex", alignItems: "center", gap: 10 }}>
+              <Download size={20} /> {t.dlApk}{meta?.apkMB && <span style={{ opacity: 0.7, fontSize: 13 }}>({meta.apkMB} MB)</span>}
+            </a>
+            <a href={AAB_URL} download style={{ padding: "16px 28px", borderRadius: 14, background: "rgba(255,255,255,0.15)", color: "#fff", fontWeight: 800, fontSize: 16, display: "inline-flex", alignItems: "center", gap: 10, border: "2px solid rgba(255,255,255,0.35)" }}>
+              <Package size={20} /> {t.dlAab}{meta?.aabMB && <span style={{ opacity: 0.7, fontSize: 13 }}>({meta.aabMB} MB)</span>}
+            </a>
+          </div>
+          <div style={{ marginTop: 20 }}>
+            <a href={REPO} target="_blank" rel="noopener" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 14, fontWeight: 700, opacity: 0.92, textDecoration: "underline" }}>
+              <ExternalLink size={16} /> {t.source}
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer style={{ padding: "40px 24px", textAlign: "center", borderTop: "1px solid var(--border)", color: "var(--muted)", fontSize: 14 }}>
+        <div style={{ display: "flex", gap: 20, justifyContent: "center", marginBottom: 12, flexWrap: "wrap" }}>
+          <a href="/privacy" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.privacy}</a>
+          <a href="/terms" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.terms}</a>
+          <a href={REPO} target="_blank" rel="noopener" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.github}</a>
+        </div>
+        <p>© 2026 Salorie — <a href="https://salistar.com" style={{ color: PRIMARY, fontWeight: 600 }}>salistar.com</a></p>
+      </footer>
+    </main>
+  );
+}
+
+const navLink: CSSProperties = { fontSize: 15, fontWeight: 500, color: "var(--muted-2)" };
+const btnPrimary: CSSProperties = { display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 28px", borderRadius: 14, background: PRIMARY, color: "#fff", fontWeight: 700, fontSize: 16 };
+const btnGhost: CSSProperties = { display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 28px", borderRadius: 14, background: "var(--surface)", color: "var(--text)", fontWeight: 700, fontSize: 16, border: "2px solid var(--border)" };
+const card: CSSProperties = { padding: 26, borderRadius: 20, background: "var(--surface)", border: "1px solid var(--border)" };
+
+function Head({ title, sub, left }: { title: string; sub?: string; left?: boolean }) {
+  return (
+    <div style={{ textAlign: left ? "start" : "center", marginBottom: left ? 16 : 42 }}>
+      <h2 style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1, margin: 0 }}>{title}</h2>
+      {sub && <p style={{ fontSize: 18, color: "var(--muted)", marginTop: 12 }}>{sub}</p>}
+    </div>
+  );
+}
+
+function Phone({ src, big = false, fade = false }: { src: string; big?: boolean; fade?: boolean }) {
+  const h = big ? 600 : 540;
+  return (
+    <div className={fade ? "demo-fade" : undefined} style={{ height: h, width: big ? 296 : 266, padding: 10, borderRadius: 42, background: "linear-gradient(135deg, #1f2937, #0f172a)", boxShadow: "0 26px 60px rgba(15,23,42,0.35)", flex: "0 0 auto", position: "relative" }}>
+      <div style={{ position: "absolute", top: 18, left: "50%", transform: "translateX(-50%)", width: 90, height: 18, borderRadius: 999, background: "#0f172a", zIndex: 2 }} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} alt="Salorie" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 32, display: "block", background: "#fff" }} />
+    </div>
+  );
+}
