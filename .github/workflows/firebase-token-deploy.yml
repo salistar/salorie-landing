@@ -16,10 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
+        # Pass the secret as an ENV VAR (not ${{ }} literal substitution) so the
+        # multi-line JSON with embedded quotes is written intact on the remote.
+        env:
+          FIREBASE_TOKEN_ENV: ${{ secrets.FIREBASE_TOKEN_ENV }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          envs: FIREBASE_TOKEN_ENV
           script: |
             set -e
             mkdir -p ~/apps/salorie-landing
@@ -30,10 +35,10 @@ jobs:
             else
               git clone https://github.com/salistar/salorie-landing.git .
             fi
-            # Write the endpoint secrets (FIREBASE_SERVICE_ACCOUNT + CLERK_*), never committed.
-            printf '%s' "${{ secrets.FIREBASE_TOKEN_ENV }}" > firebase-token.env
+            # Write the endpoint secrets from the forwarded env var (safe with quotes/newlines).
+            printf '%s' "$FIREBASE_TOKEN_ENV" > firebase-token.env
             chmod 600 firebase-token.env
-            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            # Image is public on GHCR -> anonymous pull, no docker login needed.
             docker compose -f docker-compose.firebase-token.yml pull
             docker compose -f docker-compose.firebase-token.yml up -d --remove-orphans
             sleep 4
