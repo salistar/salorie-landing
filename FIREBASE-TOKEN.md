@@ -2,7 +2,7 @@
 
 Deploys the Clerk→Firebase custom-token endpoint next to `salorie.salistar.com`,
 same pattern (GHCR image + Cloudflare Tunnel). Public URL target:
-**`https://auth.salistar.com/firebase-token`**.
+**`https://salorie-auth.salistar.com/firebase-token`**.
 
 ## What auto-deploys (GitHub Actions, no manual SSH)
 `docker-compose.firebase-token.yml` + `.github/workflows/firebase-token-deploy.yml`:
@@ -30,7 +30,7 @@ hostname on the VPS, so do them by hand once.
 **1. Cloudflare Tunnel ingress** — on the VPS, edit the cloudflared config
 (same file the landing uses), add BEFORE the `service: http_status:404` line:
 ```yaml
-  - hostname: auth.salistar.com
+  - hostname: salorie-auth.salistar.com
     service: http://localhost:4004
 ```
 then:
@@ -43,11 +43,11 @@ sudo systemctl restart cloudflared
 
 ## Verify
 ```bash
-curl -s https://auth.salistar.com/health         # -> {"ok":true}
+curl -s https://salorie-auth.salistar.com/health         # -> {"ok":true}
 ```
 
 ## Then wire the app + cut over rules (in the salistar/salorie repo)
-1. App `.env`: `EXPO_PUBLIC_FIREBASE_TOKEN_URL=https://auth.salistar.com/firebase-token` → rebuild APK/AAB.
+1. App `.env`: `EXPO_PUBLIC_FIREBASE_TOKEN_URL=https://salorie-auth.salistar.com/firebase-token` → rebuild APK/AAB.
 2. **After the new build is released to users**, switch `firebase.json` to
    `firestore.secured.rules` and `firebase deploy --only firestore:rules`.
    (Cutting over earlier breaks already-installed apps that lack the bridge.)
