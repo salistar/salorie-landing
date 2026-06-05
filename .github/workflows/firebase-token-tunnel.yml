@@ -1,0 +1,24 @@
+name: Setup firebase-token tunnel
+
+# One-shot (manual): expose salorie-auth.salistar.com via the existing Cloudflare
+# Tunnel by running firebase-token/setup-tunnel.sh on the VPS. The script backs up
+# + validates the config and rolls back on error, so it cannot take the tunnel down.
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-tunnel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          command_timeout: 5m
+          script: |
+            set -e
+            cd ~/apps/salorie-landing
+            git fetch --all
+            git reset --hard origin/main
+            bash firebase-token/setup-tunnel.sh
