@@ -8,9 +8,10 @@
 # FIREBASE_TOKEN_ENV GitHub secret; never committed).
 services:
   firebase-token:
-    image: ghcr.io/salistar/salorie-firebase-token:latest
+    # Built on the VPS from ./firebase-token (no GHCR pull / no registry auth).
+    build: ./firebase-token
+    image: salorie-firebase-token:local
     container_name: salorie-firebase-token
-    pull_policy: always
     restart: always
     # Localhost only — Cloudflare Tunnel terminates TLS and routes the hostname.
     ports:

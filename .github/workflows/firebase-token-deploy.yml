@@ -38,10 +38,10 @@ jobs:
             # Write the endpoint secrets from the forwarded env var (safe with quotes/newlines).
             printf '%s' "$FIREBASE_TOKEN_ENV" > firebase-token.env
             chmod 600 firebase-token.env
-            # Image is public on GHCR -> anonymous pull, no docker login needed.
-            docker compose -f docker-compose.firebase-token.yml pull
-            docker compose -f docker-compose.firebase-token.yml up -d --remove-orphans
+            # ISOLATED compose project (-p) so this NEVER touches the landing
+            # container. No --remove-orphans (both files share this directory).
+            docker compose -p salorie-firebase-token -f docker-compose.firebase-token.yml up -d --build
             sleep 4
-            docker compose -f docker-compose.firebase-token.yml ps
+            docker compose -p salorie-firebase-token -f docker-compose.firebase-token.yml ps
             # Sanity: the container should answer /health on its localhost port.
             curl -fsS http://127.0.0.1:4004/health && echo " <- firebase-token healthy"
