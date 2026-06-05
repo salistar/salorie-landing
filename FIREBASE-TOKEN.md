@@ -4,23 +4,17 @@ Deploys the Clerk→Firebase custom-token endpoint next to `salorie.salistar.com
 same pattern (GHCR image + Cloudflare Tunnel). Public URL target:
 **`https://salorie-auth.salistar.com/firebase-token`**.
 
-## What auto-deploys (GitHub Actions, no manual SSH)
+## What auto-deploys (GitHub Actions → VPS) — DONE ✅
 `docker-compose.firebase-token.yml` + `.github/workflows/firebase-token-deploy.yml`:
-on push (or **Run workflow**), GitHub Actions SSHes to the VPS, writes
-`firebase-token.env` from the `FIREBASE_TOKEN_ENV` secret, and runs
-`docker compose -f docker-compose.firebase-token.yml up -d`. The container listens
-on `127.0.0.1:4004` (→ container `:8787`).
+**Run workflow** (manual) → GitHub Actions SSHes to the VPS, writes
+`firebase-token.env` from the `FIREBASE_TOKEN_ENV` secret, **builds the image from
+`./firebase-token` on the VPS** (no registry/auth), and runs it in an isolated
+compose project (`-p salorie-firebase-token`) so it never touches the landing.
+The container listens on `127.0.0.1:4004` (→ container `:8787`).
 
-### Required GitHub secret (one-time)
-Add `FIREBASE_TOKEN_ENV` to this repo (Settings → Secrets → Actions) — the full
-contents of the endpoint `.env`:
-```
-PORT=8787
-CLERK_JWKS_URL=https://evident-drake-70.clerk.accounts.dev/.well-known/jwks.json
-CLERK_ISSUER=https://evident-drake-70.clerk.accounts.dev
-FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"salistar-salorie", ...}
-```
-(`VPS_HOST/VPS_USER/VPS_SSH_KEY/GHCR_PAT` already exist — reused from `deploy.yml`.)
+Status: deployed & healthy — `curl 127.0.0.1:4004/health` → `{"ok":true}`.
+The `FIREBASE_TOKEN_ENV` secret is already set (uses the current SA key).
+`VPS_HOST/VPS_USER/VPS_SSH_KEY` reused from `deploy.yml`.
 
 ## Two one-time VPS/Cloudflare steps (manual — they touch the shared tunnel)
 
