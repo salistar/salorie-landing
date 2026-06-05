@@ -1,8 +1,9 @@
 services:
   salorie-landing:
+    # Built on the VPS from source (no GHCR auth needed).
+    build: .
     image: ghcr.io/salistar/salorie-landing:latest
     container_name: salorie-landing
-    pull_policy: always
     restart: always
     ports:
       - '127.0.0.1:4003:3000'

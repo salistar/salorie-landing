@@ -21,45 +21,8 @@ env:
   IMAGE_OWNER: ${{ github.repository_owner }}
 
 jobs:
-  build:
-    name: Build Docker image
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: docker/setup-qemu-action@v3
-
-      - uses: docker/setup-buildx-action@v3
-
-      - uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Lowercase owner
-        id: owner
-        run: echo "lower=${IMAGE_OWNER,,}" >> $GITHUB_OUTPUT
-
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: Dockerfile
-          push: true
-          # Serveur 3 = Oracle ARM64 -> image multi-arch (deploy via repo 'salistar')
-          platforms: linux/amd64,linux/arm64
-          tags: |
-            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/salorie-landing:latest
-            ${{ env.REGISTRY }}/${{ steps.owner.outputs.lower }}/salorie-landing:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
   deploy:
     name: Deploy to Hetzner VPS
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v1
@@ -77,9 +40,8 @@ jobs:
             else
               git clone https://github.com/salistar/salorie-landing.git .
             fi
-            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker compose pull
-            docker compose up -d --remove-orphans
+            # Build the image on the VPS from source (no GHCR auth / no GHCR_PAT needed).
+            docker compose up -d --build --remove-orphans
             docker image prune -af --filter "until=72h"
             sleep 5
             docker compose ps
