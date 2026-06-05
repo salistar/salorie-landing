@@ -10,6 +10,7 @@ export const metadata: Metadata = {
     'fitness app', 'health tracking', 'macros tracker',
   ],
   authors: [{ name: 'Idriss Kriouile', url: 'https://salistar.com' }],
+  metadataBase: new URL('https://salorie.salistar.com'),
   openGraph: {
     title: 'Salorie — AI-powered Calorie & Nutrition Tracker',
     description:
@@ -18,11 +19,13 @@ export const metadata: Metadata = {
     siteName: 'Salorie',
     locale: 'fr_FR',
     type: 'website',
+    images: [{ url: '/og.png', width: 1024, height: 500, alt: 'Salorie' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Salorie — AI-powered Calorie & Nutrition Tracker',
     description: 'Scanne ton repas avec l\'IA et suis tes objectifs.',
+    images: ['/og.png'],
   },
 };
 
