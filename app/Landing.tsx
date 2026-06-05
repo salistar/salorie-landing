@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import {
   Camera, Activity, Brain, TrendingUp, Globe, Shield,
   Smartphone, Github, ExternalLink, Download, Package,
   Trophy, Dumbbell, Heart, Sparkles, Sun, Moon, Quote,
+  ChevronDown, Check, X,
 } from "lucide-react";
 
 const PRIMARY = "#298f50";
@@ -153,6 +154,75 @@ const T: Record<Lang, any> = {
   },
 };
 
+const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; a: string }[] }> = {
+  fr: {
+    faqTitle: "Questions fréquentes", faqSub: "Tout ce qu'il faut savoir avant de commencer.",
+    items: [
+      { q: "Salorie est-il gratuit ?", a: "Oui, les fonctions principales (scan IA, suivi, coach) sont gratuites. Une offre Premium optionnelle débloquera des insights avancés." },
+      { q: "Le scan par photo est-il précis ?", a: "Il utilise l'IA Gemini pour estimer les aliments et les macros. Tu peux toujours ajuster les quantités avant d'enregistrer." },
+      { q: "Mes données sont-elles privées ?", a: "Oui. Chaque utilisateur n'accède qu'à ses propres données (Firestore verrouillé par utilisateur, connexion sécurisée Clerk)." },
+      { q: "Sur quelles plateformes ?", a: "Android maintenant (APK signé, bientôt sur Google Play). iOS est prévu." },
+      { q: "L'app est-elle en arabe ?", a: "Oui — français, anglais et arabe, avec une interface RTL complète." },
+    ],
+  },
+  en: {
+    faqTitle: "Frequently asked questions", faqSub: "Everything you need to know before starting.",
+    items: [
+      { q: "Is Salorie free?", a: "Yes, the core features (AI scan, tracking, coach) are free. An optional Premium tier will unlock advanced insights." },
+      { q: "Is the photo scan accurate?", a: "It uses Gemini AI to estimate foods and macros. You can always adjust the quantities before saving." },
+      { q: "Is my data private?", a: "Yes. Each user can only access their own data (per-user locked Firestore, secure Clerk sign-in)." },
+      { q: "Which platforms?", a: "Android now (signed APK, soon on Google Play). iOS is planned." },
+      { q: "Is the app available in Arabic?", a: "Yes — French, English and Arabic, with a full RTL interface." },
+    ],
+  },
+  ar: {
+    faqTitle: "الأسئلة الشائعة", faqSub: "كل ما تحتاج معرفته قبل البدء.",
+    items: [
+      { q: "هل Salorie مجاني؟", a: "نعم، الميزات الأساسية (المسح بالذكاء، التتبّع، المدرّب) مجانية. وستتيح باقة Premium اختيارية رؤى متقدمة." },
+      { q: "هل المسح بالصورة دقيق؟", a: "يستخدم ذكاء Gemini لتقدير الأطعمة والماكروز. يمكنك دائمًا تعديل الكميات قبل الحفظ." },
+      { q: "هل بياناتي خاصة؟", a: "نعم. كل مستخدم يصل إلى بياناته فقط (Firestore مقفل لكل مستخدم وتسجيل آمن عبر Clerk)." },
+      { q: "ما المنصات المدعومة؟", a: "أندرويد الآن (APK موقّع، وقريبًا على Google Play). iOS قيد التخطيط." },
+      { q: "هل التطبيق متوفر بالعربية؟", a: "نعم — الفرنسية والإنجليزية والعربية، بواجهة RTL كاملة." },
+    ],
+  },
+};
+
+const COMPARE: Record<Lang, { title: string; sub: string; us: string; them: string; rows: { f: string; us: boolean | string; them: boolean | string }[] }> = {
+  fr: {
+    title: "Pourquoi Salorie", sub: "Comparé aux apps de suivi classiques.", us: "Salorie", them: "Autres apps",
+    rows: [
+      { f: "Scan repas par IA (photo)", us: true, them: "Souvent payant" },
+      { f: "Micronutriments estimés", us: true, them: false },
+      { f: "Coach TDEE adaptatif", us: true, them: "Rarement" },
+      { f: "3 langues + arabe RTL", us: true, them: false },
+      { f: "Social & gamification", us: true, them: "Limité" },
+      { f: "Health Connect", us: true, them: "Parfois" },
+    ],
+  },
+  en: {
+    title: "Why Salorie", sub: "Compared to classic tracking apps.", us: "Salorie", them: "Other apps",
+    rows: [
+      { f: "AI meal scan (photo)", us: true, them: "Often paid" },
+      { f: "Estimated micronutrients", us: true, them: false },
+      { f: "Adaptive TDEE coach", us: true, them: "Rarely" },
+      { f: "3 languages + Arabic RTL", us: true, them: false },
+      { f: "Social & gamification", us: true, them: "Limited" },
+      { f: "Health Connect", us: true, them: "Sometimes" },
+    ],
+  },
+  ar: {
+    title: "لماذا Salorie", sub: "مقارنةً بتطبيقات التتبّع التقليدية.", us: "Salorie", them: "تطبيقات أخرى",
+    rows: [
+      { f: "مسح الوجبة بالذكاء (صورة)", us: true, them: "غالبًا مدفوع" },
+      { f: "تقدير العناصر الدقيقة", us: true, them: false },
+      { f: "مدرّب TDEE متكيّف", us: true, them: "نادرًا" },
+      { f: "3 لغات + عربية RTL", us: true, them: false },
+      { f: "اجتماعي وتحفيز", us: true, them: "محدود" },
+      { f: "Health Connect", us: true, them: "أحيانًا" },
+    ],
+  },
+};
+
 export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB: string | null; iso: string | null } | null }) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [lang, setLang] = useState<Lang>("fr");
@@ -181,6 +251,8 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
   }, []);
 
   const t = T[lang];
+  const faq = FAQ[lang];
+  const cmp = COMPARE[lang];
   const dateStr = meta?.iso ? new Date(meta.iso).toLocaleDateString(lang === "ar" ? "ar" : lang === "en" ? "en-GB" : "fr-FR", { year: "numeric", month: "long", day: "numeric" }) : null;
   const demoShot = DEMO_IDX[demo];
 
@@ -250,6 +322,7 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
       </section>
 
       {/* FEATURES */}
+      <Reveal>
       <section id="features" style={{ padding: "66px 24px" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Head title={t.featTitle} sub={t.featSub} />
@@ -264,6 +337,7 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
           </div>
         </div>
       </section>
+      </Reveal>
 
       {/* DEMO (auto-play) */}
       <section id="demo" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
@@ -303,6 +377,7 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
       </section>
 
       {/* TESTIMONIALS */}
+      <Reveal>
       <section id="testimonials" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
         <div style={{ maxWidth: 1200, margin: "0 auto" }}>
           <Head title={t.testTitle} sub={t.testSub} />
@@ -320,6 +395,38 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
           </div>
         </div>
       </section>
+      </Reveal>
+
+      {/* COMPARISON */}
+      <Reveal>
+        <section id="compare" style={{ padding: "66px 24px" }}>
+          <div style={{ maxWidth: 820, margin: "0 auto" }}>
+            <Head title={cmp.title} sub={cmp.sub} />
+            <div style={{ ...card, padding: 0, overflow: "hidden" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr 1fr" }}>
+                <Cell>{""}</Cell>
+                <Cell accent>{cmp.us}</Cell>
+                <Cell>{cmp.them}</Cell>
+                {cmp.rows.map((r, i) => (
+                  <CmpRow key={i} feat={r.f} us={r.us} them={r.them} last={i === cmp.rows.length - 1} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </Reveal>
+
+      {/* FAQ */}
+      <Reveal>
+        <section id="faq" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
+          <div style={{ maxWidth: 760, margin: "0 auto" }}>
+            <Head title={faq.faqTitle} sub={faq.faqSub} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {faq.items.map((it, i) => <FaqItem key={i} q={it.q} a={it.a} />)}
+            </div>
+          </div>
+        </section>
+      </Reveal>
 
       {/* DOWNLOAD */}
       <section id="download" style={{ padding: "66px 24px" }}>
@@ -361,6 +468,52 @@ const navLink: CSSProperties = { fontSize: 15, fontWeight: 500, color: "var(--mu
 const btnPrimary: CSSProperties = { display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 28px", borderRadius: 14, background: PRIMARY, color: "#fff", fontWeight: 700, fontSize: 16 };
 const btnGhost: CSSProperties = { display: "inline-flex", alignItems: "center", gap: 10, padding: "16px 28px", borderRadius: 14, background: "var(--surface)", color: "var(--text)", fontWeight: 700, fontSize: 16, border: "2px solid var(--border)" };
 const card: CSSProperties = { padding: 26, borderRadius: 20, background: "var(--surface)", border: "1px solid var(--border)" };
+
+function Reveal({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVis(true); obs.disconnect(); } }, { threshold: 0.12 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return <div ref={ref} className={"reveal" + (vis ? " in" : "")}>{children}</div>;
+}
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="faq-item" data-open={open}>
+      <button className="faq-q" onClick={() => setOpen((o) => !o)}>
+        <span>{q}</span>
+        <ChevronDown size={20} className="faq-chev" />
+      </button>
+      <div className="faq-a"><div className="faq-a-inner">{a}</div></div>
+    </div>
+  );
+}
+
+function Cell({ children, accent }: { children: ReactNode; accent?: boolean }) {
+  return <div style={{ padding: "14px 16px", fontWeight: 800, fontSize: 15, color: accent ? PRIMARY : "var(--text)", borderBottom: "1px solid var(--border)", background: "var(--surface-2)", textAlign: "center" }}>{children}</div>;
+}
+
+function CmpRow({ feat, us, them, last }: { feat: string; us: boolean | string; them: boolean | string; last?: boolean }) {
+  const render = (v: boolean | string): ReactNode => {
+    if (v === true) return <Check size={20} color={PRIMARY} />;
+    if (v === false) return <X size={18} color="#cbd5e1" />;
+    return <span style={{ fontSize: 12.5, color: "var(--muted)" }}>{v}</span>;
+  };
+  const base: CSSProperties = { padding: "14px 16px", borderBottom: last ? "none" : "1px solid var(--border)", display: "flex", alignItems: "center" };
+  return (
+    <>
+      <div style={{ ...base, fontWeight: 600, fontSize: 14.5, color: "var(--text)" }}>{feat}</div>
+      <div style={{ ...base, justifyContent: "center", background: "rgba(41,143,80,0.06)" }}>{render(us)}</div>
+      <div style={{ ...base, justifyContent: "center" }}>{render(them)}</div>
+    </>
+  );
+}
 
 function Head({ title, sub, left }: { title: string; sub?: string; left?: boolean }) {
   return (
