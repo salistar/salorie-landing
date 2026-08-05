@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
-import {
-  Camera, Activity, Brain, TrendingUp, Globe, Shield,
-  Smartphone, Github, ExternalLink, Download, Package,
-  Trophy, Dumbbell, Heart, Sparkles, Sun, Moon, Quote,
-  ChevronDown, Check, X,
-} from "lucide-react";
+import { Camera, Activity, Brain, TrendingUp, Globe, Shield, Smartphone, Github, ExternalLink, Download, Package, Trophy, Dumbbell, Heart, Sparkles, Sun, Moon, Quote, ChevronDown, Check, X, LogIn, UserPlus } from "lucide-react";
 
 const PRIMARY = "#298f50";
 const PRIMARY_DARK = "#1f6b3c";
@@ -15,7 +10,12 @@ const APK_URL = `${REL}/salorie-v1.0.0-prod.apk`;
 const AAB_URL = `${REL}/salorie-v1.0.0-prod.aab`;
 const REPO = "https://github.com/salistar/salorie";
 // Connect the landing to the live web app.
-const WEB_URL = "https://app.salorie.salistar.com";
+// L'espace de connexion. Le bouton « Essayer sur le web » qui pointait ici a ete
+// retire : il envoyait les visiteurs sur une page de connexion, en laissant croire
+// qu'une application web complete existait. On assume desormais ce que c'est —
+// se connecter ou creer un compte — et le telechargement redevient l'action
+// principale, puisque le produit est mobile.
+const APP_URL = "https://app.salorie.com";
 
 const SHOT_SRCS = [
   "/screenshots/01-home.png", "/screenshots/19-scan-barcode.png", "/screenshots/20-nutrients.png",
@@ -307,11 +307,14 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
             </h1>
             <p style={{ fontSize: 19, color: "var(--muted-2)", lineHeight: 1.6, margin: "0 0 30px 0", maxWidth: 520 }}>{t.heroSub}</p>
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href={WEB_URL} target="_blank" rel="noopener" style={{ ...btnPrimary, boxShadow: "0 10px 30px rgba(41,143,80,0.3)" }}>
-                <Smartphone size={18} /> {({ fr: "Essayer sur le web", en: "Try the web app", ar: "جرّب تطبيق الويب" } as Record<Lang, string>)[lang]}
-              </a>
-              <a href={APK_URL} download style={btnGhost}>
+              <a href={APK_URL} download style={{ ...btnPrimary, boxShadow: "0 10px 30px rgba(41,143,80,0.3)" }}>
                 <Download size={18} /> {t.ctaApk}{meta?.apkMB && <span style={{ opacity: 0.8, fontSize: 13 }}>({meta.apkMB} MB)</span>}
+              </a>
+              <a href={`${APP_URL}/login`} target="_blank" rel="noopener" style={btnGhost}>
+                <LogIn size={18} /> {({ fr: "Se connecter", en: "Sign in", ar: "تسجيل الدخول" } as Record<Lang, string>)[lang]}
+              </a>
+              <a href={`${APP_URL}/register`} target="_blank" rel="noopener" style={btnGhost}>
+                <UserPlus size={18} /> {({ fr: "Créer un compte", en: "Create an account", ar: "إنشاء حساب" } as Record<Lang, string>)[lang]}
               </a>
               <a href="#screenshots" style={btnGhost}><Smartphone size={18} /> {t.ctaSee}</a>
             </div>

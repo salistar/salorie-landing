@@ -70,5 +70,24 @@ jobs:
     needs: deploy
     runs-on: ubuntu-latest
     steps:
-      - run: sleep 30
-      - run: curl -fsS -I https://salorie.salistar.com || echo "Site not yet reachable"
+      # Cette etape se terminait par `|| echo "Site not yet reachable"` : elle ne
+      # pouvait donc JAMAIS echouer, et un deploiement cassE serait passE au vert.
+      # Elle interrogeait aussi salorie.salistar.com, alors que le domaine public est
+      # salorie.com. On verifie desormais les DEUX pages qui comptent — l'accueil et
+      # /delete-account, exigee par Google Play — avec des tentatives espacees, le
+      # conteneur pouvant mettre quelques secondes a repondre.
+      - name: Verifier que la landing repond publiquement
+        run: |
+          for page in "https://salorie.com/" "https://salorie.com/delete-account"; do
+            ok=0
+            for i in $(seq 1 15); do
+              code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$page" || echo 000)
+              echo "$page essai $i : HTTP $code"
+              if [ "$code" = "200" ]; then ok=1; break; fi
+              sleep 6
+            done
+            if [ "$ok" != "1" ]; then
+              echo "::error::$page ne repond pas 200 apres le deploiement."
+              exit 1
+            fi
+          done
