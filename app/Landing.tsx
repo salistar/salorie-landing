@@ -225,9 +225,19 @@ const COMPARE: Record<Lang, { title: string; sub: string; us: string; them: stri
   },
 };
 
-export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB: string | null; iso: string | null } | null }) {
+export default function Landing({
+  meta,
+  langueForcee,
+}: {
+  meta: { apkMB: string | null; aabMB: string | null; iso: string | null } | null;
+  /** Langue imposee par l'URL (/en, /ar). Quand elle est fournie, ni la preference
+   *  memorisee ni celle du navigateur ne s'y substituent : une page servie sous /en
+   *  DOIT rendre de l'anglais, sinon Google indexerait un contenu qui ne correspond
+   *  pas a son URL — et le lecteur arrive dans une langue qu'il n'a pas demandee. */
+  langueForcee?: Lang;
+}) {
   const [theme, setTheme] = useState<"light" | "dark">("light");
-  const [lang, setLang] = useState<Lang>("fr");
+  const [lang, setLang] = useState<Lang>(langueForcee ?? "fr");
   const [demo, setDemo] = useState(0);
 
   // Restore prefs.
@@ -235,7 +245,7 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
     const st = (localStorage.getItem("salorie-theme") as "light" | "dark") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     const nav = (typeof navigator !== "undefined" ? navigator.language : "").slice(0, 2);
     const detected: Lang = nav === "ar" ? "ar" : nav === "en" ? "en" : "fr";
-    const sl = (localStorage.getItem("salorie-lang") as Lang) || detected;
+    const sl = langueForcee || (localStorage.getItem("salorie-lang") as Lang) || detected;
     setTheme(st); setLang(sl);
   }, []);
   // Apply theme + dir/lang to <html>.

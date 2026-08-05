@@ -8,6 +8,7 @@ const PRIMARY_DARK = '#1f6b3c';
 const SUPPORT = 'salistarcompany@gmail.com';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://salorie.com/delete-account' },
   title: 'Delete your account — Salorie',
   description: 'How to delete your Salorie account and what happens to your data.',
 };

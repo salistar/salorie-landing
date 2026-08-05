@@ -5,6 +5,7 @@ const PRIMARY_DARK = '#1f6b3c';
 const UPDATED = 'June 2, 2026';
 
 export const metadata: Metadata = {
+  alternates: { canonical: 'https://salorie.com/privacy' },
   title: 'Privacy Policy — Salorie',
   description: 'How Salorie collects, uses and protects your data.',
 };
