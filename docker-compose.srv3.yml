@@ -1,0 +1,25 @@
+# Deploiement REEL de la landing sur srv3 (46.225.77.64).
+#
+# Ce fichier n'existait QUE sur le serveur, cree a la main. Il est rapatrie ici parce
+# que c'est lui qui produit le conteneur reellement servi : Caddy relaie
+# `salorie.com` vers `salorie-landing:3000` par le nom du conteneur, sur le reseau
+# `edge` qu'il partage. Le docker-compose.yml par defaut, lui, publie sur
+# 127.0.0.1:4003 et vit sur `salistar-network` — Caddy ne l'atteint pas.
+#
+# Deux differences qui comptent, et qui expliquent le « deploiement fantome » du
+# 5 aout 2026 : le nom d'image (`salorie-landing:latest` ici, `ghcr.io/...` la-bas)
+# et le RESEAU. Un deploiement qui utilise le mauvais fichier reconstruit une image
+# que personne ne sert.
+services:
+  salorie-landing:
+    build: .
+    image: salorie-landing:latest
+    container_name: salorie-landing
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+    networks: [edge]
+networks:
+  # Reseau partage avec le proxy Caddy, cree hors de cette stack.
+  edge:
+    external: true

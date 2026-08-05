@@ -32,19 +32,28 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             set -e
-            mkdir -p ~/apps/salorie-landing
             cd ~/apps/salorie-landing
-            if [ -d .git ]; then
-              git fetch --all
-              git reset --hard origin/main
-            else
-              git clone https://github.com/salistar/salorie-landing.git .
-            fi
-            # Build the image on the VPS from source (no GHCR auth / no GHCR_PAT needed).
-            docker compose up -d --build --remove-orphans
+            # Le repertoire doit deja etre un depot git : un `git clone` echouerait ici
+            # (dossier non vide) et, surtout, un repertoire inattendu signale qu'on n'est
+            # PAS sur le bon serveur. Le 5 aout 2026, ce workflow tournait sur srv2 tandis
+            # que salorie.com est servi depuis srv3 : il reconstruisait consciencieusement
+            # une image que personne n'interrogeait, et se declarait vert.
+            test -d .git || { echo "::error::~/apps/salorie-landing n'est pas un depot git — mauvais serveur ?"; exit 1; }
+            git fetch --all
+            git reset --hard origin/main
+
+            # docker-compose.srv3.yml, PAS le compose par defaut : c'est lui qui produit
+            # l'image `salorie-landing:latest` sur le reseau `edge`, celle que Caddy sert.
+            docker compose -f docker-compose.srv3.yml up -d --build --remove-orphans
             docker image prune -af --filter "until=72h"
-            sleep 5
-            docker compose ps
+            sleep 20
+            docker compose -f docker-compose.srv3.yml ps
+
+            # Le conteneur doit tourner sur l'image qu'on vient de construire, et non sur
+            # une image plus ancienne restee en place.
+            img=$(docker inspect salorie-landing --format '{{.Config.Image}}')
+            echo "image du conteneur : $img"
+            test "$img" = "salorie-landing:latest" || { echo "::error::le conteneur tourne sur $img"; exit 1; }
 
   cloudflare-purge:
     name: Purge Cloudflare cache
