@@ -14,6 +14,8 @@ const REL = "https://github.com/salistar/salorie/releases/download/v1.0.0";
 const APK_URL = `${REL}/salorie-v1.0.0-prod.apk`;
 const AAB_URL = `${REL}/salorie-v1.0.0-prod.aab`;
 const REPO = "https://github.com/salistar/salorie";
+// Connect the landing to the live web app.
+const WEB_URL = "https://app.salorie.salistar.com";
 
 const SHOT_SRCS = [
   "/screenshots/01-home.png", "/screenshots/19-scan-barcode.png", "/screenshots/20-nutrients.png",
@@ -231,7 +233,9 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
   // Restore prefs.
   useEffect(() => {
     const st = (localStorage.getItem("salorie-theme") as "light" | "dark") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    const sl = (localStorage.getItem("salorie-lang") as Lang) || "fr";
+    const nav = (typeof navigator !== "undefined" ? navigator.language : "").slice(0, 2);
+    const detected: Lang = nav === "ar" ? "ar" : nav === "en" ? "en" : "fr";
+    const sl = (localStorage.getItem("salorie-lang") as Lang) || detected;
     setTheme(st); setLang(sl);
   }, []);
   // Apply theme + dir/lang to <html>.
@@ -303,7 +307,10 @@ export default function Landing({ meta }: { meta: { apkMB: string | null; aabMB:
             </h1>
             <p style={{ fontSize: 19, color: "var(--muted-2)", lineHeight: 1.6, margin: "0 0 30px 0", maxWidth: 520 }}>{t.heroSub}</p>
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-              <a href={APK_URL} download style={{ ...btnPrimary, boxShadow: "0 10px 30px rgba(41,143,80,0.3)" }}>
+              <a href={WEB_URL} target="_blank" rel="noopener" style={{ ...btnPrimary, boxShadow: "0 10px 30px rgba(41,143,80,0.3)" }}>
+                <Smartphone size={18} /> {({ fr: "Essayer sur le web", en: "Try the web app", ar: "جرّب تطبيق الويب" } as Record<Lang, string>)[lang]}
+              </a>
+              <a href={APK_URL} download style={btnGhost}>
                 <Download size={18} /> {t.ctaApk}{meta?.apkMB && <span style={{ opacity: 0.8, fontSize: 13 }}>({meta.apkMB} MB)</span>}
               </a>
               <a href="#screenshots" style={btnGhost}><Smartphone size={18} /> {t.ctaSee}</a>
@@ -530,7 +537,7 @@ function Phone({ src, big = false, fade = false }: { src: string; big?: boolean;
     <div className={fade ? "demo-fade" : undefined} style={{ height: h, width: big ? 296 : 266, padding: 10, borderRadius: 42, background: "linear-gradient(135deg, #1f2937, #0f172a)", boxShadow: "0 26px 60px rgba(15,23,42,0.35)", flex: "0 0 auto", position: "relative" }}>
       <div style={{ position: "absolute", top: 18, left: "50%", transform: "translateX(-50%)", width: 90, height: 18, borderRadius: 999, background: "#0f172a", zIndex: 2 }} />
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={src} alt="Salorie" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 32, display: "block", background: "#fff" }} />
+      <img src={src} alt="Salorie" loading="lazy" decoding="async" style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 32, display: "block", background: "#fff" }} />
     </div>
   );
 }

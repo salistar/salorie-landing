@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://salorie.salistar.com/sitemap.xml
+Sitemap: https://salorie.com/sitemap.xml

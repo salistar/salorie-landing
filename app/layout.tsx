@@ -11,6 +11,8 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: 'Idriss Kriouile', url: 'https://salistar.com' }],
   metadataBase: new URL('https://salorie.salistar.com'),
+  icons: { icon: '/favicon.svg', apple: '/icon.png' },
+  alternates: { canonical: 'https://salorie.com/' },
   openGraph: {
     title: 'Salorie — AI-powered Calorie & Nutrition Tracker',
     description:

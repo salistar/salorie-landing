@@ -80,5 +80,5 @@ a { color: inherit; text-decoration: none; }
   .hero-phone { display: none !important; }
   .grid-3 { grid-template-columns: 1fr !important; }
   .h1-resp { font-size: 38px !important; }
-  .nav-links a.nav-text { display: none !important; }
+  .nav-text { display: none !important; }
 }
