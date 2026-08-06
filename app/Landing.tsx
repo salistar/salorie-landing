@@ -478,7 +478,7 @@ export default function Landing({
           <a href="/terms" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.terms}</a>
           <a href={REPO} target="_blank" rel="noopener" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.github}</a>
         </div>
-        <p>© 2026 Salorie — <a href="https://salistar.com" style={{ color: PRIMARY, fontWeight: 600 }}>salistar.com</a></p>
+        <p>© 2026 Salorie — <a href="https://salistar.com" style={{ color: PRIMARY, fontWeight: 600 }}>salistar.com</a> — Idriss Kriouile</p>
       </footer>
     </main>
   );
