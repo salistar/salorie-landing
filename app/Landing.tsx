@@ -74,7 +74,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "Disponible sur Android", dlSub: "APK signé de production — installation directe. Bientôt sur Google Play.",
     build: "Build", dlApk: "Télécharger l'APK", dlAab: "Bundle .aab (Play Store)", source: "Code source & releases sur GitHub",
-    footer: { privacy: "Confidentialité", terms: "Conditions", github: "GitHub" },
+    footer: { privacy: "Confidentialité", terms: "Conditions", deleteAccount: "Supprimer mon compte", github: "GitHub" },
   },
   en: {
     dir: "ltr",
@@ -113,7 +113,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "Available on Android", dlSub: "Signed production APK — direct install. Coming soon to Google Play.",
     build: "Build", dlApk: "Download the APK", dlAab: "Bundle .aab (Play Store)", source: "Source code & releases on GitHub",
-    footer: { privacy: "Privacy", terms: "Terms", github: "GitHub" },
+    footer: { privacy: "Privacy", terms: "Terms", deleteAccount: "Delete my account", github: "GitHub" },
   },
   ar: {
     dir: "rtl",
@@ -152,7 +152,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "متوفّر على أندرويد", dlSub: "APK موقّع للإنتاج — تثبيت مباشر. قريبًا على Google Play.",
     build: "إصدار", dlApk: "تحميل APK", dlAab: "حزمة ‎.aab (Play Store)", source: "الشيفرة والإصدارات على GitHub",
-    footer: { privacy: "الخصوصية", terms: "الشروط", github: "GitHub" },
+    footer: { privacy: "الخصوصية", terms: "الشروط", deleteAccount: "حذف حسابي", github: "GitHub" },
   },
 };
 
@@ -476,6 +476,10 @@ export default function Landing({
         <div style={{ display: "flex", gap: 20, justifyContent: "center", marginBottom: 12, flexWrap: "wrap" }}>
           <a href="/privacy" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.privacy}</a>
           <a href="/terms" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.terms}</a>
+          {/* Google Play exige une URL de demande de suppression de compte « facilement
+              trouvable ». La page /delete-account existait deja et figurait au sitemap,
+              mais n etait liee depuis AUCUNE page — un relecteur ne l aurait pas trouvee. */}
+          <a href="/delete-account" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.deleteAccount}</a>
           <a href={REPO} target="_blank" rel="noopener" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.github}</a>
         </div>
         <p>© 2026 Salorie — <a href="https://salistar.com" style={{ color: PRIMARY, fontWeight: 600 }}>salistar.com</a> — Idriss Kriouile</p>
