@@ -28,7 +28,7 @@ export default function Privacy() {
           <li><strong>Account info</strong> — your email address, and your name &amp; profile picture if you sign in with Google. Authentication is handled by Clerk.</li>
           <li><strong>Health &amp; fitness data you enter</strong> — age, height, weight, goals, the meals you log (calories &amp; macros), water intake, and workouts. This is the core of the app and stays tied to your account.</li>
           <li><strong>Food photos</strong> — only the photos you choose to scan. They are sent to Google&rsquo;s Gemini AI to recognise the food and estimate nutrition. They are not used for advertising.</li>
-          <li><strong>Subscription status</strong> — if you buy Premium, we store your entitlement via RevenueCat. Payment is processed by Google Play (in-app) or by our merchant of record (website purchases); we never see your card details.</li>
+          <li><strong>Subscription status</strong> — if you buy Premium, we store your entitlement so the app knows what to unlock. Payment is processed on salorie.com by our merchant of record; we never see your card details.</li>
           <li><strong>Technical identifiers</strong> — an app-install / push token so notifications and subscriptions work. We do not collect the Android Advertising ID.</li>
         </ul>
       </Section>
@@ -49,7 +49,7 @@ export default function Privacy() {
           <li><strong>Clerk</strong> — authentication / account management.</li>
           <li><strong>Google Gemini</strong> — AI analysis of the food photos you scan.</li>
           <li><strong>Firebase (Google)</strong> — secure backend storage of the data you log.</li>
-          <li><strong>RevenueCat + Google Play Billing</strong> — subscription management.</li>
+          <li><strong>RevenueCat</strong> — subscription entitlement management.</li>
           <li><strong>Paddle / Polar (merchant of record)</strong> — payment processing and invoicing for purchases made on salorie.com, under their own privacy policies.</li>
           <li><strong>FatSecret</strong> — food &amp; nutrition database lookups for your searches.</li>
         </ul>

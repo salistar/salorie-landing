@@ -55,7 +55,7 @@ export default function DeleteAccount() {
         cannot identify you are also kept.
       </p>
       <p>
-        If you subscribed through Google Play, cancel the subscription in the Play Store as well — we cannot cancel
+        If you have an active Premium subscription, cancel it from the billing portal linked in your purchase receipt — we cannot cancel
         it on your behalf.
       </p>
 

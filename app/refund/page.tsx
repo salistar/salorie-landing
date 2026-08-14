@@ -32,38 +32,29 @@ export default function Refund() {
         </ul>
       </Section>
 
-      <Section title="2. Purchases made through Google Play">
-        <p>
-          If you subscribed inside the Android app, billing is handled by Google Play. Refund requests
-          follow <a href="https://support.google.com/googleplay/answer/2479637" target="_blank" rel="noopener" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>Google Play&rsquo;s refund policy</a>.
-          You can also contact us at <a href="mailto:support@salorie.com" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>support@salorie.com</a> and we will help where we can.
-        </p>
-      </Section>
-
-      <Section title="3. Cancelling your subscription">
+      <Section title="2. Cancelling your subscription">
         <p>
           Cancelling stops the next renewal but does not by itself trigger a refund: you keep Premium
-          access until the end of the period already paid. You can cancel anytime from the billing
-          portal linked in your receipt (web purchases) or from your Google Play subscriptions
-          (in-app purchases).
+          access until the end of the period already paid. You can cancel at any time from the billing
+          portal linked in your purchase receipt.
         </p>
       </Section>
 
-      <Section title="4. Fair use">
+      <Section title="3. Fair use">
         <p>
           The money-back guarantee applies once per customer. We may decline refund requests that show
           a pattern of abuse (for example repeated purchase-and-refund cycles).
         </p>
       </Section>
 
-      <Section title="5. Your statutory rights">
+      <Section title="4. Your statutory rights">
         <p>
           Nothing in this policy limits any non-waivable rights you have under the consumer-protection
           laws of your country of residence.
         </p>
       </Section>
 
-      <Section title="6. Contact">
+      <Section title="5. Contact">
         <p>Refund requests and questions: <a href="mailto:support@salorie.com" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>support@salorie.com</a></p>
       </Section>
 
