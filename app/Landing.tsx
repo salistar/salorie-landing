@@ -160,7 +160,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   fr: {
     faqTitle: "Questions fréquentes", faqSub: "Tout ce qu'il faut savoir avant de commencer.",
     items: [
-      { q: "Salorie est-il gratuit ?", a: "Oui, les fonctions principales (scan IA, suivi, coach) sont gratuites. L'offre Premium optionnelle — 4,99 $/mois ou 29,99 $/an — débloque des insights avancés." },
+      { q: "Salorie est-il gratuit ?", a: "Oui, les fonctions principales (scan IA, suivi, coach) sont gratuites. L'offre Premium optionnelle — 4,99 €/mois ou 29,99 €/an — débloque des insights avancés." },
       { q: "Le scan par photo est-il précis ?", a: "Il utilise l'IA Gemini pour estimer les aliments et les macros. Tu peux toujours ajuster les quantités avant d'enregistrer." },
       { q: "Mes données sont-elles privées ?", a: "Oui. Chaque utilisateur n'accède qu'à ses propres données (Firestore verrouillé par utilisateur, connexion sécurisée Clerk)." },
       { q: "Sur quelles plateformes ?", a: "Android maintenant (APK signé, bientôt sur Google Play). iOS est prévu." },
@@ -170,7 +170,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   en: {
     faqTitle: "Frequently asked questions", faqSub: "Everything you need to know before starting.",
     items: [
-      { q: "Is Salorie free?", a: "Yes, the core features (AI scan, tracking, coach) are free. The optional Premium tier — $4.99/month or $29.99/year — unlocks advanced insights." },
+      { q: "Is Salorie free?", a: "Yes, the core features (AI scan, tracking, coach) are free. The optional Premium tier — €4.99/month or €29.99/year — unlocks advanced insights." },
       { q: "Is the photo scan accurate?", a: "It uses Gemini AI to estimate foods and macros. You can always adjust the quantities before saving." },
       { q: "Is my data private?", a: "Yes. Each user can only access their own data (per-user locked Firestore, secure Clerk sign-in)." },
       { q: "Which platforms?", a: "Android now (signed APK, soon on Google Play). iOS is planned." },
@@ -180,7 +180,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   ar: {
     faqTitle: "الأسئلة الشائعة", faqSub: "كل ما تحتاج معرفته قبل البدء.",
     items: [
-      { q: "هل Salorie مجاني؟", a: "نعم، الميزات الأساسية (المسح بالذكاء، التتبّع، المدرّب) مجانية. وتتيح باقة Premium الاختيارية — 4.99 $ شهريًا أو 29.99 $ سنويًا — رؤى متقدمة." },
+      { q: "هل Salorie مجاني؟", a: "نعم، الميزات الأساسية (المسح بالذكاء، التتبّع، المدرّب) مجانية. وتتيح باقة Premium الاختيارية — 4.99 € شهريًا أو 29.99 € سنويًا — رؤى متقدمة." },
       { q: "هل المسح بالصورة دقيق؟", a: "يستخدم ذكاء Gemini لتقدير الأطعمة والماكروز. يمكنك دائمًا تعديل الكميات قبل الحفظ." },
       { q: "هل بياناتي خاصة؟", a: "نعم. كل مستخدم يصل إلى بياناته فقط (Firestore مقفل لكل مستخدم وتسجيل آمن عبر Clerk)." },
       { q: "ما المنصات المدعومة؟", a: "أندرويد الآن (APK موقّع، وقريبًا على Google Play). iOS قيد التخطيط." },
@@ -232,30 +232,30 @@ const PRICING: Record<Lang, {
 }> = {
   fr: {
     title: "Tarifs simples", sub: "Gratuit pour l'essentiel. Premium pour aller plus loin.",
-    free: { name: "Gratuit", price: "0 $", items: ["Scan IA des repas", "Suivi calories, macros & eau", "Coach TDEE adaptatif", "Social & gamification"] },
+    free: { name: "Gratuit", price: "0 €", items: ["Scan IA des repas", "Suivi calories, macros & eau", "Coach TDEE adaptatif", "Social & gamification"] },
     premium: {
-      name: "Salorie Premium", badge: "Bientôt", mo: "4,99 $", moSuffix: "/ mois",
-      yrLine: "ou 29,99 $ / an — 2 mois offerts",
+      name: "Salorie Premium", badge: "Bientôt", mo: "4,99 €", moSuffix: "/ mois",
+      yrLine: "ou 29,99 € / an — 2 mois offerts",
       items: ["Tout le gratuit, plus :", "Insights IA avancés", "Micronutriments détaillés", "Plans de repas IA illimités", "Support prioritaire"],
-      note: "Prix en USD, taxes incluses selon ton pays. Annulable à tout moment. Garantie 14 jours satisfait ou remboursé sur les achats web.",
+      note: "Prix en EUR, taxes incluses selon ton pays. Annulable à tout moment. Garantie 14 jours satisfait ou remboursé sur les achats web.",
     },
   },
   en: {
     title: "Simple pricing", sub: "Free for the essentials. Premium to go further.",
-    free: { name: "Free", price: "$0", items: ["AI meal scan", "Calories, macros & water tracking", "Adaptive TDEE coach", "Social & gamification"] },
+    free: { name: "Free", price: "€0", items: ["AI meal scan", "Calories, macros & water tracking", "Adaptive TDEE coach", "Social & gamification"] },
     premium: {
-      name: "Salorie Premium", badge: "Coming soon", mo: "$4.99", moSuffix: "/ month",
-      yrLine: "or $29.99 / year — 2 months free",
+      name: "Salorie Premium", badge: "Coming soon", mo: "€4.99", moSuffix: "/ month",
+      yrLine: "or €29.99 / year — 2 months free",
       items: ["Everything in Free, plus:", "Advanced AI insights", "Detailed micronutrients", "Unlimited AI meal plans", "Priority support"],
-      note: "Prices in USD, tax included where applicable. Cancel anytime. 14-day money-back guarantee on web purchases.",
+      note: "Prices in EUR, tax included where applicable. Cancel anytime. 14-day money-back guarantee on web purchases.",
     },
   },
   ar: {
     title: "أسعار بسيطة", sub: "مجاني للأساسيات. وPremium للذهاب أبعد.",
-    free: { name: "مجاني", price: "0 $", items: ["مسح الوجبات بالذكاء", "تتبّع السعرات والماكروز والماء", "مدرّب TDEE متكيّف", "اجتماعي وتحفيز"] },
+    free: { name: "مجاني", price: "0 €", items: ["مسح الوجبات بالذكاء", "تتبّع السعرات والماكروز والماء", "مدرّب TDEE متكيّف", "اجتماعي وتحفيز"] },
     premium: {
-      name: "Salorie Premium", badge: "قريبًا", mo: "4.99 $", moSuffix: "/ شهريًا",
-      yrLine: "أو 29.99 $ سنويًا — شهران مجانًا",
+      name: "Salorie Premium", badge: "قريبًا", mo: "4.99 €", moSuffix: "/ شهريًا",
+      yrLine: "أو 29.99 € سنويًا — شهران مجانًا",
       items: ["كل المجاني، بالإضافة إلى:", "رؤى متقدمة بالذكاء", "عناصر دقيقة مفصّلة", "خطط وجبات غير محدودة", "دعم ذو أولوية"],
       note: "الأسعار بالدولار وتشمل الضرائب حسب بلدك. يمكن الإلغاء في أي وقت. ضمان استرداد خلال 14 يومًا لمشتريات الويب.",
     },
