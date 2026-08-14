@@ -74,7 +74,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "Disponible sur Android", dlSub: "APK signé de production — installation directe. Bientôt sur Google Play.",
     build: "Build", dlApk: "Télécharger l'APK", dlAab: "Bundle .aab (Play Store)", source: "Code source & releases sur GitHub",
-    footer: { privacy: "Confidentialité", terms: "Conditions", deleteAccount: "Supprimer mon compte", github: "GitHub" },
+    footer: { privacy: "Confidentialité", terms: "Conditions", refund: "Remboursement", contact: "Contact", deleteAccount: "Supprimer mon compte", github: "GitHub" },
   },
   en: {
     dir: "ltr",
@@ -113,7 +113,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "Available on Android", dlSub: "Signed production APK — direct install. Coming soon to Google Play.",
     build: "Build", dlApk: "Download the APK", dlAab: "Bundle .aab (Play Store)", source: "Source code & releases on GitHub",
-    footer: { privacy: "Privacy", terms: "Terms", deleteAccount: "Delete my account", github: "GitHub" },
+    footer: { privacy: "Privacy", terms: "Terms", refund: "Refunds", contact: "Contact", deleteAccount: "Delete my account", github: "GitHub" },
   },
   ar: {
     dir: "rtl",
@@ -152,7 +152,7 @@ const T: Record<Lang, any> = {
     ],
     dlTitle: "متوفّر على أندرويد", dlSub: "APK موقّع للإنتاج — تثبيت مباشر. قريبًا على Google Play.",
     build: "إصدار", dlApk: "تحميل APK", dlAab: "حزمة ‎.aab (Play Store)", source: "الشيفرة والإصدارات على GitHub",
-    footer: { privacy: "الخصوصية", terms: "الشروط", deleteAccount: "حذف حسابي", github: "GitHub" },
+    footer: { privacy: "الخصوصية", terms: "الشروط", refund: "الاسترداد", contact: "اتصل بنا", deleteAccount: "حذف حسابي", github: "GitHub" },
   },
 };
 
@@ -160,7 +160,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   fr: {
     faqTitle: "Questions fréquentes", faqSub: "Tout ce qu'il faut savoir avant de commencer.",
     items: [
-      { q: "Salorie est-il gratuit ?", a: "Oui, les fonctions principales (scan IA, suivi, coach) sont gratuites. Une offre Premium optionnelle débloquera des insights avancés." },
+      { q: "Salorie est-il gratuit ?", a: "Oui, les fonctions principales (scan IA, suivi, coach) sont gratuites. L'offre Premium optionnelle — 4,99 $/mois ou 29,99 $/an — débloque des insights avancés." },
       { q: "Le scan par photo est-il précis ?", a: "Il utilise l'IA Gemini pour estimer les aliments et les macros. Tu peux toujours ajuster les quantités avant d'enregistrer." },
       { q: "Mes données sont-elles privées ?", a: "Oui. Chaque utilisateur n'accède qu'à ses propres données (Firestore verrouillé par utilisateur, connexion sécurisée Clerk)." },
       { q: "Sur quelles plateformes ?", a: "Android maintenant (APK signé, bientôt sur Google Play). iOS est prévu." },
@@ -170,7 +170,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   en: {
     faqTitle: "Frequently asked questions", faqSub: "Everything you need to know before starting.",
     items: [
-      { q: "Is Salorie free?", a: "Yes, the core features (AI scan, tracking, coach) are free. An optional Premium tier will unlock advanced insights." },
+      { q: "Is Salorie free?", a: "Yes, the core features (AI scan, tracking, coach) are free. The optional Premium tier — $4.99/month or $29.99/year — unlocks advanced insights." },
       { q: "Is the photo scan accurate?", a: "It uses Gemini AI to estimate foods and macros. You can always adjust the quantities before saving." },
       { q: "Is my data private?", a: "Yes. Each user can only access their own data (per-user locked Firestore, secure Clerk sign-in)." },
       { q: "Which platforms?", a: "Android now (signed APK, soon on Google Play). iOS is planned." },
@@ -180,7 +180,7 @@ const FAQ: Record<Lang, { faqTitle: string; faqSub: string; items: { q: string; 
   ar: {
     faqTitle: "الأسئلة الشائعة", faqSub: "كل ما تحتاج معرفته قبل البدء.",
     items: [
-      { q: "هل Salorie مجاني؟", a: "نعم، الميزات الأساسية (المسح بالذكاء، التتبّع، المدرّب) مجانية. وستتيح باقة Premium اختيارية رؤى متقدمة." },
+      { q: "هل Salorie مجاني؟", a: "نعم، الميزات الأساسية (المسح بالذكاء، التتبّع، المدرّب) مجانية. وتتيح باقة Premium الاختيارية — 4.99 $ شهريًا أو 29.99 $ سنويًا — رؤى متقدمة." },
       { q: "هل المسح بالصورة دقيق؟", a: "يستخدم ذكاء Gemini لتقدير الأطعمة والماكروز. يمكنك دائمًا تعديل الكميات قبل الحفظ." },
       { q: "هل بياناتي خاصة؟", a: "نعم. كل مستخدم يصل إلى بياناته فقط (Firestore مقفل لكل مستخدم وتسجيل آمن عبر Clerk)." },
       { q: "ما المنصات المدعومة؟", a: "أندرويد الآن (APK موقّع، وقريبًا على Google Play). iOS قيد التخطيط." },
@@ -222,6 +222,43 @@ const COMPARE: Record<Lang, { title: string; sub: string; us: string; them: stri
       { f: "اجتماعي وتحفيز", us: true, them: "محدود" },
       { f: "Health Connect", us: true, them: "أحيانًا" },
     ],
+  },
+};
+
+const PRICING: Record<Lang, {
+  title: string; sub: string;
+  free: { name: string; price: string; items: string[] };
+  premium: { name: string; badge: string; mo: string; moSuffix: string; yrLine: string; items: string[]; note: string };
+}> = {
+  fr: {
+    title: "Tarifs simples", sub: "Gratuit pour l'essentiel. Premium pour aller plus loin.",
+    free: { name: "Gratuit", price: "0 $", items: ["Scan IA des repas", "Suivi calories, macros & eau", "Coach TDEE adaptatif", "Social & gamification"] },
+    premium: {
+      name: "Salorie Premium", badge: "Bientôt", mo: "4,99 $", moSuffix: "/ mois",
+      yrLine: "ou 29,99 $ / an — 2 mois offerts",
+      items: ["Tout le gratuit, plus :", "Insights IA avancés", "Micronutriments détaillés", "Plans de repas IA illimités", "Support prioritaire"],
+      note: "Prix en USD, taxes incluses selon ton pays. Annulable à tout moment. Garantie 14 jours satisfait ou remboursé sur les achats web.",
+    },
+  },
+  en: {
+    title: "Simple pricing", sub: "Free for the essentials. Premium to go further.",
+    free: { name: "Free", price: "$0", items: ["AI meal scan", "Calories, macros & water tracking", "Adaptive TDEE coach", "Social & gamification"] },
+    premium: {
+      name: "Salorie Premium", badge: "Coming soon", mo: "$4.99", moSuffix: "/ month",
+      yrLine: "or $29.99 / year — 2 months free",
+      items: ["Everything in Free, plus:", "Advanced AI insights", "Detailed micronutrients", "Unlimited AI meal plans", "Priority support"],
+      note: "Prices in USD, tax included where applicable. Cancel anytime. 14-day money-back guarantee on web purchases.",
+    },
+  },
+  ar: {
+    title: "أسعار بسيطة", sub: "مجاني للأساسيات. وPremium للذهاب أبعد.",
+    free: { name: "مجاني", price: "0 $", items: ["مسح الوجبات بالذكاء", "تتبّع السعرات والماكروز والماء", "مدرّب TDEE متكيّف", "اجتماعي وتحفيز"] },
+    premium: {
+      name: "Salorie Premium", badge: "قريبًا", mo: "4.99 $", moSuffix: "/ شهريًا",
+      yrLine: "أو 29.99 $ سنويًا — شهران مجانًا",
+      items: ["كل المجاني، بالإضافة إلى:", "رؤى متقدمة بالذكاء", "عناصر دقيقة مفصّلة", "خطط وجبات غير محدودة", "دعم ذو أولوية"],
+      note: "الأسعار بالدولار وتشمل الضرائب حسب بلدك. يمكن الإلغاء في أي وقت. ضمان استرداد خلال 14 يومًا لمشتريات الويب.",
+    },
   },
 };
 
@@ -267,6 +304,7 @@ export default function Landing({
   const t = T[lang];
   const faq = FAQ[lang];
   const cmp = COMPARE[lang];
+  const pr = PRICING[lang];
   const dateStr = meta?.iso ? new Date(meta.iso).toLocaleDateString(lang === "ar" ? "ar" : lang === "en" ? "en-GB" : "fr-FR", { year: "numeric", month: "long", day: "numeric" }) : null;
   const demoShot = DEMO_IDX[demo];
 
@@ -436,6 +474,43 @@ export default function Landing({
         </section>
       </Reveal>
 
+      {/* PRICING */}
+      <Reveal>
+        <section id="pricing" style={{ padding: "66px 24px" }}>
+          <div style={{ maxWidth: 820, margin: "0 auto" }}>
+            <Head title={pr.title} sub={pr.sub} />
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 22, alignItems: "stretch" }}>
+              <div style={{ ...card, display: "flex", flexDirection: "column", gap: 14 }}>
+                <div style={{ fontWeight: 900, fontSize: 20 }}>{pr.free.name}</div>
+                <div style={{ fontSize: 36, fontWeight: 900, color: PRIMARY }}>{pr.free.price}</div>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+                  {pr.free.items.map((it, i) => (
+                    <li key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 14.5 }}><Check size={17} color={PRIMARY} style={{ flex: "0 0 auto" }} /> {it}</li>
+                  ))}
+                </ul>
+              </div>
+              <div style={{ ...card, border: `2px solid ${PRIMARY}`, display: "flex", flexDirection: "column", gap: 14, position: "relative" }}>
+                <div style={{ position: "absolute", top: -13, insetInlineStart: 20, background: PRIMARY, color: "#fff", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 999 }}>{pr.premium.badge}</div>
+                <div style={{ fontWeight: 900, fontSize: 20 }}>{pr.premium.name}</div>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 36, fontWeight: 900, color: PRIMARY }}>{pr.premium.mo}</span>
+                  <span style={{ color: "var(--muted)", fontSize: 14.5, fontWeight: 700 }}>{pr.premium.moSuffix}</span>
+                </div>
+                <div style={{ color: "var(--muted-2)", fontSize: 14.5, fontWeight: 700 }}>{pr.premium.yrLine}</div>
+                <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
+                  {pr.premium.items.map((it, i) => (
+                    <li key={i} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 14.5, fontWeight: i === 0 ? 700 : 400 }}>
+                      {i > 0 && <Check size={17} color={PRIMARY} style={{ flex: "0 0 auto" }} />} {it}
+                    </li>
+                  ))}
+                </ul>
+                <p style={{ margin: "auto 0 0", color: "var(--muted)", fontSize: 12.5, lineHeight: 1.55 }}>{pr.premium.note}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </Reveal>
+
       {/* FAQ */}
       <Reveal>
         <section id="faq" style={{ padding: "66px 24px", background: "var(--how-bg)" }}>
@@ -476,6 +551,9 @@ export default function Landing({
         <div style={{ display: "flex", gap: 20, justifyContent: "center", marginBottom: 12, flexWrap: "wrap" }}>
           <a href="/privacy" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.privacy}</a>
           <a href="/terms" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.terms}</a>
+          <a href="/refund" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.refund}</a>
+          {/* Paddle/Polar exigent un contact joignable depuis la homepage. */}
+          <a href="mailto:support@salorie.com" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.contact}</a>
           {/* Google Play exige une URL de demande de suppression de compte « facilement
               trouvable ». La page /delete-account existait deja et figurait au sitemap,
               mais n etait liee depuis AUCUNE page — un relecteur ne l aurait pas trouvee. */}

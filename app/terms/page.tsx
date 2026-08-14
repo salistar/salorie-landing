@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 const PRIMARY = '#298f50';
 const PRIMARY_DARK = '#1f6b3c';
-const UPDATED = 'June 2, 2026';
+const UPDATED = 'August 14, 2026';
 
 export const metadata: Metadata = {
   alternates: { canonical: 'https://salorie.com/terms' },
@@ -33,10 +33,11 @@ export default function Terms() {
 
       <Section title="4. Premium subscriptions">
         <ul>
-          <li>Salorie offers an optional auto-renewing Premium subscription, billed through Google Play.</li>
+          <li>Salorie offers an optional auto-renewing Premium subscription. Current prices are shown on <a href="/#pricing" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>salorie.com</a> and at checkout.</li>
+          <li><strong>In-app purchases</strong> are billed through Google Play. Manage or cancel anytime in your Google Play account settings.</li>
+          <li><strong>Website purchases</strong> are processed by our merchant of record, which acts as the seller of record, handles payment and applicable taxes, and appears on your bank statement. Manage or cancel anytime from the billing portal linked in your receipt.</li>
           <li>Your subscription renews automatically unless cancelled at least 24 hours before the end of the current period.</li>
-          <li>Manage or cancel anytime in your Google Play account settings.</li>
-          <li>Except where required by law, payments are non-refundable.</li>
+          <li>Refunds are handled as described in our <a href="/refund" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>Refund Policy</a>, including a 14-day money-back guarantee on first website purchases.</li>
         </ul>
       </Section>
 
@@ -53,10 +54,10 @@ export default function Terms() {
       </Section>
 
       <Section title="8. Contact">
-        <p>Questions: <a href="mailto:salistarcompany@gmail.com" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>salistarcompany@gmail.com</a></p>
+        <p>Questions: <a href="mailto:support@salorie.com" style={{ color: PRIMARY_DARK, fontWeight: 600 }}>support@salorie.com</a></p>
       </Section>
 
-      <p style={{ marginTop: 48, color: '#94a3b8', fontSize: 13 }}>© 2026 Salistar Company. <a href="/privacy" style={{ color: PRIMARY_DARK }}>Privacy Policy</a></p>
+      <p style={{ marginTop: 48, color: '#94a3b8', fontSize: 13 }}>© 2026 Salistar Company. <a href="/privacy" style={{ color: PRIMARY_DARK }}>Privacy Policy</a> · <a href="/refund" style={{ color: PRIMARY_DARK }}>Refund Policy</a></p>
     </main>
   );
 }
