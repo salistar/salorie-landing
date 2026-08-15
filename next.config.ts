@@ -11,10 +11,13 @@ const config: NextConfig = {
   },
 };
 
-// Plugin de build Sentry. Il s'applique meme sans DSN : il enveloppe simplement
-// le code, et l'init reste inerte tant que SENTRY_DSN est absent (cf.
-// sentry.server.config.ts). Le televersement des source maps demanderait un
-// SENTRY_AUTH_TOKEN, non configure — sans lui le build passe normalement.
+// Plugin de build Sentry : il enveloppe le rendu serveur et les routes, et
+// injecte le DSN dans le bundle navigateur — c'est donc au BUILD que tout se
+// joue, pas au demarrage du conteneur.
+//
+// Le televersement des source maps demanderait un SENTRY_AUTH_TOKEN, non
+// configure : sans lui le build passe, les piles d'appel sont simplement
+// minifiees dans Sentry.
 export default withSentryConfig(config, {
   org: 'salistarcompany',
   project: 'salorie-landing',
@@ -22,5 +25,9 @@ export default withSentryConfig(config, {
   // Fait transiter les requetes Sentry par le site : les bloqueurs de publicite
   // coupent les appels directs vers *.sentry.io, on perdrait des erreurs.
   tunnelRoute: '/monitoring',
-  disableLogger: true,
+  // Retire les traces de debogage du SDK du bundle. Remplace `disableLogger`,
+  // deprecie et supprime dans une version a venir.
+  webpack: {
+    treeshake: { removeDebugLogging: true },
+  },
 });

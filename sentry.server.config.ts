@@ -1,16 +1,15 @@
 // Sentry — cote serveur de la landing.
 //
-// ⚠️ AUCUN DSN PAR DEFAUT ici, contrairement aux autres composants : le projet
-// Sentry `salorie-landing` n'existait pas encore au moment du cablage (l'interface
-// de creation de projet se figeait). Le code est donc pret mais INERTE : sans
-// SENTRY_DSN, `Sentry.init` n'est jamais appele et rien n'est envoye.
-//
-// Pour l'activer : creer le projet `salorie-landing` (plateforme Next.js) dans
-// l'org salistarcompany, puis poser son DSN dans SENTRY_DSN et
-// NEXT_PUBLIC_SENTRY_DSN. Aucun autre changement de code n'est necessaire.
+// Le DSN est en clair : ce n'est pas un secret, il est en ecriture seule et
+// prevu pour etre embarque dans le bundle navigateur. Le mettre en dur evite le
+// circuit `gh secret set`, qui a deja enregistre des chaines vides sur ce projet.
+// L'environnement reste prioritaire si on veut rediriger vers un autre projet.
 import * as Sentry from '@sentry/nextjs';
 
-const dsn = process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN || '';
+const dsn =
+  process.env.SENTRY_DSN ||
+  process.env.NEXT_PUBLIC_SENTRY_DSN ||
+  'https://ba5afdbccf4e2cff9c74a38366c5fd68@o4509622074081280.ingest.de.sentry.io/4511913674342480';
 
 if (dsn) {
   Sentry.init({

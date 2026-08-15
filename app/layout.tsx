@@ -22,7 +22,9 @@ export const metadata: Metadata = {
     title: 'Salorie — AI-powered Calorie & Nutrition Tracker',
     description:
       'Scanne ton repas, suis tes calories et atteins tes objectifs santé.',
-    url: 'https://salorie.salistar.com',
+    // Le domaine public est salorie.com : cette URL pointait encore l'ancien
+    // hote, que les apercus de partage affichaient comme adresse canonique.
+    url: 'https://salorie.com',
     siteName: 'Salorie',
     locale: 'fr_FR',
     type: 'website',

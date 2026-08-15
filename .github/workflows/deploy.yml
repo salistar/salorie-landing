@@ -13,6 +13,15 @@ on:
       - 'postcss.config.js'
       - 'Dockerfile'
       - 'docker-compose.yml'
+      # C'est docker-compose.srv3.yml que le job execute, pas le compose par
+      # defaut : sans lui dans cette liste, une modification du fichier qui
+      # construit reellement le conteneur ne declencherait aucun deploiement.
+      - 'docker-compose.srv3.yml'
+      # Instrumentation Sentry : le DSN est embarque au BUILD (variables
+      # NEXT_PUBLIC_*), donc toute modification de ces fichiers exige un
+      # redeploiement pour atteindre le navigateur.
+      - 'instrumentation*.ts'
+      - 'sentry.*.config.ts'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
