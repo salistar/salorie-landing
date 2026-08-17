@@ -553,7 +553,7 @@ export default function Landing({
           <a href="/terms" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.terms}</a>
           <a href="/refund" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.refund}</a>
           {/* Paddle/Polar exigent un contact joignable depuis la homepage. */}
-          <a href="mailto:support@salorie.com" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.contact}</a>
+          <a href="/contact" style={{ color: PRIMARY, fontWeight: 600 }}>{t.footer.contact}</a>
           {/* Google Play exige une URL de demande de suppression de compte « facilement
               trouvable ». La page /delete-account existait deja et figurait au sitemap,
               mais n etait liee depuis AUCUNE page — un relecteur ne l aurait pas trouvee. */}
