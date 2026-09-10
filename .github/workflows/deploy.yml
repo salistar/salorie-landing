@@ -89,14 +89,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Cette etape se terminait par `|| echo "Site not yet reachable"` : elle ne
-      # pouvait donc JAMAIS echouer, et un deploiement cassE serait passE au vert.
-      # Elle interrogeait aussi salorie.salistar.com, alors que le domaine public est
-      # salorie.com. On verifie desormais les DEUX pages qui comptent — l'accueil et
+      # pouvait donc JAMAIS echouer, et un deploiement casse serait passe au vert.
+      # On verifie donc les DEUX pages qui comptent — l'accueil et
       # /delete-account, exigee par Google Play — avec des tentatives espacees, le
       # conteneur pouvant mettre quelques secondes a repondre.
+      #
+      # ⚠ ET ON VERIFIE SALORIE.SALISTAR.COM, PAS SALORIE.COM.
+      # Elle a interroge salorie.com un temps, au motif que « le domaine public
+      # est salorie.com ». C'est vrai, et c'est justement le piege : depuis la
+      # fusion de la landing dans `web/app/(landing)`, Caddy sert
+      # `salorie.com` par `salorie-web` — un conteneur d'un AUTRE depot, que ce
+      # workflow ne construit pas et ne redemarre pas. Ce depot-ci ne sert que
+      # `salorie.salistar.com` (`reverse_proxy salorie-landing:3000`).
+      #
+      # Consequence, constatee le 10/09/2026 : ce deploiement a echoue en rouge
+      # alors que son propre conteneur tournait — salorie-web etait en 500 pour
+      # une raison sans aucun rapport. Une verification qui accuse le voisin ne
+      # verifie rien.
       - name: Verifier que la landing repond publiquement
         run: |
-          for page in "https://salorie.com/" "https://salorie.com/delete-account"; do
+          for page in "https://salorie.salistar.com/" "https://salorie.salistar.com/delete-account"; do
             ok=0
             for i in $(seq 1 15); do
               code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$page" || echo 000)
