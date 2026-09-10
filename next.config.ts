@@ -9,6 +9,49 @@ const config: NextConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
   },
+
+  /**
+   * ⚠ CE SITE NE SERT PLUS RIEN : TOUT PART VERS SALORIE.COM.
+   * ---------------------------------------------------------------------
+   * Ce dépôt est l'ANCÊTRE de la landing, fusionnée depuis dans
+   * `web/app/(landing)` du dépôt principal. Les deux sites se ressemblaient,
+   * mais pas leurs liens de téléchargement :
+   *
+   *   salorie.com            `meta?.apk?.url ?? APK_URL` → la dernière release
+   *   salorie.salistar.com   `v1.0.0` EN DUR             → l'APK du 9 juin 2026
+   *
+   * Un visiteur arrivant ici repartait donc avec un binaire antérieur au
+   * consentement d'amitié, au correctif de la faille Premium et à Health
+   * Connect. Rien ne le signalait : un lien codé en dur qui répond 200 a l'air
+   * parfaitement sain. C'est exactement le défaut que `releaseMeta.ts` avait
+   * corrigé côté salorie.com, resté entier sur son jumeau.
+   *
+   * Deux landings, c'était deux fois la maintenance et une chance sur deux de
+   * corriger la bonne. On ne corrige plus celle-ci : on l'éteint.
+   *
+   * ⚠ POURQUOI ICI ET PAS DANS CADDY, QUI SERAIT SA PLACE.
+   * Une redirection de domaine appartient au reverse proxy — et c'est là que
+   * vit déjà celle de `www.salorie.com`. Mais le Caddyfile de srv3 n'est
+   * versionné dans AUCUN dépôt : l'y écrire produirait une règle que personne
+   * ne peut relire ni retrouver. Écrite ici, elle se relit, se teste et se
+   * révoque comme du code. Contrepartie assumée : le conteneur doit continuer
+   * à tourner pour émettre ses 308. Le retirer pour de bon demande une ligne
+   * dans le Caddyfile, et cette ligne-là n'est pas à moi.
+   *
+   * `permanent: true` = 308 : la méthode et le corps sont conservés, et les
+   * moteurs transfèrent le référencement. Les URL déposées à la Play Console
+   * (politique de confidentialité, suppression de compte) restent donc
+   * valides, redirigées vers leurs jumelles.
+   */
+  async redirects() {
+    return [
+      {
+        source: '/:chemin*',
+        destination: 'https://salorie.com/:chemin*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 // Plugin de build Sentry : il enveloppe le rendu serveur et les routes, et

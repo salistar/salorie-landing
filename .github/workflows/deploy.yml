@@ -106,18 +106,45 @@ jobs:
       # alors que son propre conteneur tournait — salorie-web etait en 500 pour
       # une raison sans aucun rapport. Une verification qui accuse le voisin ne
       # verifie rien.
-      - name: Verifier que la landing repond publiquement
+      # ⚠ ON N'ATTEND PLUS 200 : CE SITE REDIRIGE.
+      # Depuis le 10/09/2026, tout part vers salorie.com en 308 (cf. l'entete de
+      # `next.config.ts`). Exiger 200 ferait echouer chaque deploiement.
+      #
+      # Mais « ca redirige » ne suffit pas comme controle : une redirection vers
+      # une page morte passerait au vert. On verifie donc les DEUX bouts — le
+      # 308 ici, et le 200 a l'arrivee, en suivant le saut. Les deux chemins
+      # testes sont ceux qui comptent : l'accueil, et /delete-account, exigee
+      # par Google Play et deposee telle quelle a la console.
+      - name: Verifier que la redirection mene quelque part
         run: |
-          for page in "https://salorie.salistar.com/" "https://salorie.salistar.com/delete-account"; do
+          for chemin in "/" "/delete-account"; do
+            page="https://salorie.salistar.com$chemin"
             ok=0
             for i in $(seq 1 15); do
               code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$page" || echo 000)
-              echo "$page essai $i : HTTP $code"
-              if [ "$code" = "200" ]; then ok=1; break; fi
+              cible=$(curl -s -o /dev/null -w '%{redirect_url}' --max-time 10 "$page" || echo "")
+              echo "$page essai $i : HTTP $code -> $cible"
+              case "$code" in
+                30[178])
+                  case "$cible" in
+                    https://salorie.com$chemin*) ok=1 ;;
+                    *) echo "::error::redirige vers $cible, pas vers salorie.com$chemin" ; exit 1 ;;
+                  esac
+                  ;;
+              esac
+              [ "$ok" = "1" ] && break
               sleep 6
             done
             if [ "$ok" != "1" ]; then
-              echo "::error::$page ne repond pas 200 apres le deploiement."
+              echo "::error::$page ne redirige pas apres le deploiement (dernier code : $code)."
+              exit 1
+            fi
+            # Et l'arrivee doit exister : une redirection vers un 404 serait pire
+            # que pas de redirection du tout.
+            arrivee=$(curl -sL -o /dev/null -w '%{http_code}' --max-time 15 "$page" || echo 000)
+            echo "$page suivie jusqu au bout : HTTP $arrivee"
+            if [ "$arrivee" != "200" ]; then
+              echo "::error::la cible de $page rend $arrivee, pas 200."
               exit 1
             fi
           done
