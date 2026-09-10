@@ -16,6 +16,14 @@ Sentry.init({
   environment: process.env.NODE_ENV || 'development',
   enabled: process.env.NODE_ENV === 'production',
   tracesSampleRate: 0.1,
+  // ⚠ LE TUNNEL SE DECLARE ICI, PLUS DANS `next.config.ts`.
+  // `withSentryConfig({ tunnelRoute })` n'agit que par le plugin WEBPACK du SDK
+  // (`_sentryRewritesTunnelPath`, defini dans son seul `config/webpack.js`).
+  // Next 16 compilant avec Turbopack, la cle etait lue, acceptee, et sans
+  // effet : le navigateur repartait en direct vers *.sentry.io, c'est-a-dire
+  // dans le bloqueur de publicite que ce tunnel devait contourner. Le relais
+  // est desormais ecrit a la main — voir `app/monitoring/route.ts`.
+  tunnel: '/monitoring',
   // Pas de Session Replay : la landing est publique, mais rejouer les sessions
   // de visiteurs dans un service tiers n'apporterait rien ici.
   replaysSessionSampleRate: 0,
